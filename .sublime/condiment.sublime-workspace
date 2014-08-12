@@ -1,0 +1,384 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"gulp",
+				"gulpfile"
+			],
+			[
+				"re",
+				"releases"
+			],
+			[
+				"she",
+				"shell_env"
+			],
+			[
+				"PYTHON",
+				"PYTHONPATH"
+			],
+			[
+				"A",
+				"APPLICATION"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/home/huntingbears/Desarrollo/condiment/condiment/config/base.py",
+			"settings":
+			{
+				"buffer_size": 725,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 292.0,
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Enable Package"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 685.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/huntingbears/Desarrollo/condiment/fabfile.py",
+		"/home/huntingbears/Desarrollo/condiment/setup.py",
+		"/home/huntingbears/Desarrollo/condiment/.tx/config",
+		"/home/huntingbears/Desarrollo/condiment/condiment/__init__.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/__init__.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/dependencies.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/dictconfig.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/errors.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/filehash.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/format.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/i18n.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/iosync.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/logger.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/recorder.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/repository.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/reprepro.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/testsuite.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/utils.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/version.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/fabric/__init__.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/fabric/deploy.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/fabric/docker.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/fabric/environ.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/fabric/map.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/fabric/vagrant.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/__init__.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/build.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/clean.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/install.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/maint.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/message_extractors.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/report.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/common/setup/utils.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/__init__.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/base.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/distributions.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/logger.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/paths.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/pkg.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/sphinx.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/data/exclude-packages.list",
+		"/home/huntingbears/Desarrollo/condiment/condiment/config/data/include-data-patterns.list",
+		"/home/huntingbears/Desarrollo/condiment/condiment/data/__init__.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/data/docs/rst/conf.py",
+		"/home/huntingbears/Desarrollo/condiment/condiment/data/docs/rst/readme.rst",
+		"/home/huntingbears/Desarrollo/condiment/.travis.yml",
+		"/home/huntingbears/Desarrollo/condiment/COPYING.rst",
+		"/home/huntingbears/Desarrollo/condiment/MANIFEST.in",
+		"/home/huntingbears/Desarrollo/condiment/Makefile",
+		"/home/huntingbears/Desarrollo/condiment/README.rst",
+		"/home/huntingbears/Desarrollo/canister/.travis.yml",
+		"/home/huntingbears/Desarrollo/canister/Makefile",
+		"/home/huntingbears/Desarrollo/canister/README.rst",
+		"/home/huntingbears/Desarrollo/canister/DCO.rst",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/tribus.nginx.conf",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/selected_packages.list",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/Vagrantfile",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/dists-template",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/preseed-db.sql",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/provision.sh",
+		"/home/huntingbears/Desarrollo/canister/canister/common/tests/test_recorder.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/base.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/celery_cfg.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/ldap.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/gtk.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/switches.py",
+		"/home/huntingbears/Desarrollo/canister/.gitignore",
+		"/home/huntingbears/Desarrollo/canister/.tx/config",
+		"/home/huntingbears/Desarrollo/canister/fabfile.py",
+		"/home/huntingbears/Desarrollo/canister/setup.py",
+		"/home/huntingbears/Desarrollo/canister/canister/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/dependencies.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/dictconfig.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/errors.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/filehash.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/format.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/i18n.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/iosync.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/logger.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/recorder.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/repository.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/reprepro.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/testsuite.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/utils.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/version.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/fabric/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/fabric/deploy.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/fabric/docker.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/fabric/environ.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/fabric/map.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/fabric/vagrant.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/build.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/clean.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/install.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/maint.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/message_extractors.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/report.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/utils.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/tests/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/setup/tests/test_utils.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/tests/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/tests/test_repository.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/tests/test_reprepro.py",
+		"/home/huntingbears/Desarrollo/canister/canister/common/tests/test_utils.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/distributions.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/paths.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/pkg.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/pkgrecorder.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/sphinx.py",
+		"/home/huntingbears/Desarrollo/canister/canister/config/data/preseed-ldap.ldif",
+		"/home/huntingbears/Desarrollo/canister/canister/data/__init__.py",
+		"/home/huntingbears/Desarrollo/canister/canister/data/docs/rst/readme.rst",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/ar/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/ca/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/cs/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/da/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/de/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/en/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/es/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/es_VE/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/et/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/fa/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/fi/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/fr/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/hr/LC_MESSAGES/django.po",
+		"/home/huntingbears/Desarrollo/canister/canister/data/i18n/hu/LC_MESSAGES/django.po"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"Canister",
+			"canister",
+			"Tribus",
+			"Copyright (C) 2013-2014 Tribus Developers",
+			"tribus",
+			"from tribus",
+			"js",
+			"../..",
+			"renews",
+			"js",
+			"renews_gruntfile",
+			"tribus",
+			"[AUTHOR]",
+			"[APPLICATION]",
+			"'",
+			"# Copyright (C) 2014 ReNews",
+			"tribus",
+			"# Copyright (C) 2013-2014 Tribus Developers",
+			"tribus",
+			"# This file is part of Tribus.",
+			"# Tribus ",
+			"Tribus",
+			"commen",
+			"tribus",
+			"u'",
+			"Tribus"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"Condiment",
+			"condiment",
+			"Canister",
+			"Copyright (C) 2014 Luis Alejandro Martínez Faneyth",
+			"canister",
+			"from canister",
+			"ReNews Developers",
+			"ReNews",
+			"# Copyright (C) 2014 ReNews Developers",
+			"# Copyright (C) 2014 ReNews",
+			"# This file is part of ReNews.",
+			"# ReNews ",
+			"renews",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/huntingbears/Desarrollo/condiment/condiment/config/base.py",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 725,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "condiment.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 272.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

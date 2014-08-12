@@ -1,0 +1,4 @@
+recursive-include condiment *
+global-exclude *.pyc
+global-exclude *.png
+global-exclude *.mo

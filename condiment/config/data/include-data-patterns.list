@@ -1,0 +1,11 @@
+condiment/data/html 		*.*			share/condiment/data/html
+condiment/data/static 		*.*			share/condiment/data/static
+condiment/data/templates 	*.*			share/condiment/data/templates
+condiment/data/images 		*.*			share/condiment/data/images
+condiment/data/profiles 	*.*			share/condiment/data/profiles
+condiment/data/desktop 	*.*			share/applications
+condiment/data/icons 		*.*			share/icons
+condiment/data/docs/html	*.*			share/doc/condiment
+condiment/data/docs/man	*.*			share/man/man1
+condiment/i18n				*.*			share/locale
+condiment/config			*.*			/etc/condiment
