@@ -18,29 +18,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# from condiment.config.base import CONTAINERS
-
 from __future__ import with_statement, print_function
 
 import os
 import re
-import sys
 import shutil
 from subprocess import Popen, PIPE
 from distutils.spawn import find_executable
 
-from condiment.config.base import CONTAINERS
-from condiment.config.distributions import DISTRIBUTIONS
-from condiment.common.errors import CannotIdentifyDistribution, UnsupportedDistribution
+from condiment.commands.distro import Distribution
+from condiment.common.errors import (CannotIdentifyDistribution,
+                                     UnsupportedDistribution)
 from condiment.common.utils import flatten_list
 from condiment.common.logger import get_logger
+from condiment.config.distributions import DISTRIBUTIONS
 
 log = get_logger()
 
 
-class Installer(object):
+class Install(object):
 
-    def __init__(self, containers, distributions):
+    def __init__(self, condiments):
         self.distname = ''
         self.codename = ''
         self.release_data = {}
@@ -67,8 +65,8 @@ class Installer(object):
             'l': 'label'
         }
 
-        self.containers = containers
-        self.distributions = distributions
+        self.condiments = condiments
+        self.distributions = DISTRIBUTIONS
         self.codenames = {}
         self.revcodenames = {}
 
@@ -398,43 +396,3 @@ class Installer(object):
                     log.info(str(line).strip('\n'))
                 else:
                     break
-
-
-class Distribution(object):
-
-    def __init__(self, distname, codename, containers, distributions):
-        self.distributions = distributions
-        self.distname = distname
-        self.codename = codename
-        self.containers = containers
-
-    def get_binaries(self):
-        binaries = []
-        for dep in self.get_dependencies():
-            if dep.get('containers') == self.containers \
-               and dep.get('binaries'):
-                binaries.extend(dep.get('binaries'))
-        return binaries
-
-    def get_managers(self):
-        return self.distributions[self.distname]['managers']
-
-    def get_dependencies(self):
-        return self.distributions[self.distname]['dependencies'][self.codename]
-
-    def check_binaries(self):
-        log.info('Checking for dependencies ...')
-        for b in self.get_binaries():
-            if not find_executable(b):
-                log.info('%s not found!' % b)
-                return False
-        log.info('Everything ok!')
-        return True
-
-
-if __name__ == '__main__':
-
-    installer = Installer(CONTAINERS, DISTRIBUTIONS)
-    installer.get_distro_data()
-    installer.normalize_distro_data()
-    installer.check_binaries()

@@ -28,7 +28,6 @@ For more information about this file, see documentation on
 """
 
 from setuptools import setup
-
 from condiment import BASEDIR
 from condiment.common.setup.utils import get_setup_data
 

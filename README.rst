@@ -1,2 +1,1 @@
-Condiment
-========
+condiment/data/docs/rst/readme.rst

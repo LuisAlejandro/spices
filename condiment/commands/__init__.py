@@ -17,15 +17,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-"""
-
-This module invokes the fabric scripts for Condiment.
-
-This file is a *placeholder* for the scripts that help to deploy and setup
-a development environment for Condiment. For more information, see the
-documentation in ``condiment/common/fabric/__init__.py``.
-
-"""
-
-from condiment.common.fabric import *

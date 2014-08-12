@@ -28,8 +28,9 @@ condiment.config.pkg
 from condiment import BASEDIR
 from condiment.config.base import CONFDIR, DOCDIR
 from condiment.common.utils import get_path, cat_file, readconfig
-from condiment.common.setup.utils import (get_requirements, get_dependency_links,
-                                       get_classifiers)
+from condiment.common.setup.utils import (get_requirements,
+                                          get_dependency_links,
+                                          get_classifiers)
 
 platforms = ('Any')
 keywords = ('Social Network',
@@ -66,15 +67,3 @@ debian_run_dependencies = readconfig(filename=f_debian_run_dependencies,
                                      conffile=False)
 debian_build_dependencies = readconfig(filename=f_debian_build_dependencies,
                                        conffile=False)
-
-debian_base_image_script = get_path([BASEDIR, 'condiment', 'data', 'scripts',
-                                     'debian-base-image.sh'])
-condiment_base_image_script = get_path([BASEDIR, 'condiment', 'data', 'scripts',
-                                     'condiment-base-image.sh'])
-condiment_django_syncdb_script = get_path([BASEDIR, 'condiment', 'data', 'scripts',
-                                        'django-syncdb.sh'])
-condiment_django_runserver_script = get_path([BASEDIR, 'condiment', 'data', 'scripts',
-                                           'django-runserver.sh'])
-condiment_start_container_script = get_path([BASEDIR, 'condiment', 'data', 'scripts',
-                                          'start-container.sh'])
-veeweedir = get_path([BASEDIR, 'condiment', 'data', 'scripts', 'veewee'])
