@@ -4,7 +4,7 @@ flake8==4.0.1
 wheel==0.37.1
 tox==3.24.5
 pydocstyle==6.1.1
-virtualenv==20.13.3
+virtualenv==20.14.1
 coverage==6.3.2
 sphinx==4.4.0
 lxml==4.8.0
