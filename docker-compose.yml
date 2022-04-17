@@ -1,0 +1,9 @@
+version: "3"
+services:
+  condiment:
+    image: luisalejandro/condiment:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/home/condiment/app

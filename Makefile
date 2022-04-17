@@ -82,3 +82,38 @@ dist: clean
 
 install: clean
 	python setup.py install
+
+
+
+image:
+	@docker-compose -p condiment -f docker-compose.yml build \
+		--force-rm --pull
+
+start:
+	@docker-compose -p condiment -f docker-compose.yml up \
+		--remove-orphans -d
+
+console: start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user condiment condiment bash
+
+stop:
+	@docker-compose -p condiment -f docker-compose.yml stop
+
+down:
+	@docker-compose -p condiment -f docker-compose.yml down \
+		--remove-orphans
+
+destroy:
+	@docker-compose -p condiment -f docker-compose.yml down \
+		--rmi all --remove-orphans -v
+
+virtualenv: start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user condiment condiment python -m venv --clear --copies ./winvenv
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user condiment condiment ./winvenv/bin/pip install -U wheel setuptools
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user condiment condiment ./winvenv/bin/pip install -r requirements.txt
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user condiment condiment ./winvenv/bin/pip install -r requirements-dev.txt

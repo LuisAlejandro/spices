@@ -18,11 +18,23 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see http://www.gnu.org/licenses.
 
-from condiment.core.installer import Install
+import os
+import yaml
+
+from condiment.core.installer import Installer
 
 
 def main(**kwargs):
-    install = Install(CONDIMENTS)
-    install.get_distro_data()
-    install.normalize_distro_data()
-    install.check_binaries()
+
+    currdir = os.getcwd()
+    condimentpath = os.path.join(currdir, '.condiment.yml')
+
+    if not os.path.isfile(condimentpath):
+        print('')
+        return 1
+
+    with open(condimentpath) as c:
+        installer = Installer(yaml.safe_load(c.read()))
+        installer.get_distro_data()
+        installer.normalize_distro_data()
+        installer.check_binaries()

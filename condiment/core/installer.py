@@ -34,7 +34,7 @@ from .logger import logger
 from ..config.distributions import DISTRIBUTIONS
 
 
-class Install(object):
+class Installer(object):
 
     def __init__(self, condiments):
         self.distname = ''
