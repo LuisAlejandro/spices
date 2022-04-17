@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="afr_document_analytic_ledger">
+            <t t-call="account_financial_report.external_layout">
+                <div t-foreach="objects" t-as="o">
+                    <!--VARIABLES TO BE USED LATER-->
+                    <t t-set="col" t-value="o.columns"/>
+
+                    <!-- CALLING HEADER and FOOTER -->
+                    <t t-call="account_financial_report.external_layout_header"/>
+                    <t t-call="account_financial_report.external_layout_footer"/>
+
+                    <!-- DEVELOPING PAGE/BODY -->
+                    <div class="page">
+                        <table class="basic_table"  width="100%" id='table_body'>
+                            <thead>
+                                <tr>
+                                    <td class="celdaTituloTabla" style="text-align:right;"><strong>CODE</strong></td>
+                                    <td class="celdaTituloTabla"><strong>ACCOUNT</strong></td>
+
+                                    <td class="celdaTituloTabla"><strong></strong></td>
+                                    <td class="celdaTituloTabla"><strong></strong></td>
+                                    <td class="celdaTituloTabla"><strong></strong></td>
+
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('four', 'five')"><strong>INIT. BAL.</strong></td>
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('two', 'four', 'five')"><strong>DEBIT</strong></td>
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('two', 'four', 'five')"><strong>CREDIT</strong></td>
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('one', 'four', 'five')"><strong>BALANCE</strong></td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <para style="TITLES_NEW">
+                                            <font>DATE</font>
+                                        </para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLES_NEW">
+                                            <font>PERIOD</font>
+                                        </para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLES_NEW">REFERENCE</para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLES_NEW">JOURNAL ENTRY</para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLES_NEW">PARTNER</para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLE_LEFT_ALIGN"></para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLE_LEFT_ALIGN"></para>
+                                    </td>
+                                    <td>
+                                        <para style="TITLE_LEFT_ALIGN"></para>
+                                    </td>
+                                </tr>
+
+
+                            </thead>
+                            <tbody>
+                                <t t-foreach="[x for x in lines(data['form']) if x.get('type')!= 'view' ]" t-as="line">
+                                    <tr class="prueba">
+                                        <i>
+                                        <td class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['label']">
+                                                <span t-esc="line['code']"/>
+                                            </t>
+                                        </td>
+                                        </i>
+                                        <td class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['type'] == 'view'">
+                                                <span t-esc="line['name'].upper()"/>
+                                            </t>
+                                            <t t-if="line['type'] != 'view'">
+                                                <span t-esc="line['name'].title()"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                        </td>
+                                        <td t-if="col in ('four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                        </td>
+                                        <td t-if="col in ('four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                        </td>
+                                        <td t-if="col in ('four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('balanceinit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('two', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('debit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('two', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('credit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('one', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('balance', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <t t-foreach="line.get('mayor')" t-as="m">
+                                        <tr>
+                                            <td>
+                                                <span t-esc="formatLang(m['date'], date=True)"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="m['period']"/>
+                                            </td>
+                                            <td>
+                                                <t t-if="m['ref']">
+                                                    <span t-esc="m['name']"/> - Ref: <span t-esc="m['ref']"/>
+                                                </t>
+                                                <t t-if="not m['ref']">
+                                                    <span t-esc="m['name']"/>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <span t-esc="m['entry']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="m['partner']"/>
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <span t-esc="formatLang(m['debit'], digits=2, grouping=True)"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <span t-esc="formatLang(m['credit'], digits=2, grouping=True)"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <span t-esc="formatLang(m['balance'], digits=2, grouping=True)"/>
+                                            </td>
+                                        </tr>
+                                        <t t-foreach="[z for z in m['aml_brw'].analytic_lines if data['form']['print_analytic_lines']]" t-as="y">
+                                            <tr>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                </td>
+                                                <td style="font-style:italic;">
+                                                    <span t-esc="y.account_id.complete_name"/>
+                                                </td>
+                                                <td>
+                                                    <!--
+                                                    THIS ONLY AVAILABLE WITH ANALYTIC DISTRIBUTION
+                                                    <t t-if="getattr(y,'percentage')">
+                                                        <span t-esc="y.percentage"/>
+                                                    </t>
+                                                    -->
+                                                </td>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                </td>
+                                                <td style="text-align:right;font-style:italic;">
+                                                    <t t-if="y.amount &lt; 0.0">
+                                                        <span t-esc="formatLang(y.amount * -1, digits=2, grouping=True)"/>
+                                                    </t>
+                                                </td>
+                                                <td style="text-align:right;font-style:italic;">
+                                                    <t t-if="y.amount &gt;= 0.0">
+                                                        <span t-esc="formatLang(y.amount, digits=2, grouping=True)"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="afr_template_analytic_ledger">
+            <t t-call="account_financial_report.html_container">
+                <t t-foreach="doc_ids" t-as="doc_id">
+                    <t t-raw="translate_doc(doc_id, doc_model, 'company_id.partner_id.lang', 'account_financial_report.afr_document_analytic_ledger')"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>

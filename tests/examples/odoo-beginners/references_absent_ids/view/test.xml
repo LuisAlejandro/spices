@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="unexistent_module.unexistent_id">
+           <field name="name">course.form.view</field>
+        </record>
+    </data>
+</openerp>

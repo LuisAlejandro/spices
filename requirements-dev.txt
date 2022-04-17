@@ -1,0 +1,14 @@
+setuptools==60.10.0
+pip==22.0.4
+flake8==4.0.1
+wheel==0.37.1
+tox==3.24.5
+pydocstyle==6.1.1
+virtualenv==20.13.3
+coverage==6.3.2
+sphinx==4.4.0
+lxml==4.8.0
+sh==1.14.2
+gitchangelog==3.0.4
+bumpversion==0.6.0
+coveralls==3.3.1

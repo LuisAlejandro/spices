@@ -1,34 +1,46 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Copyright (C) 2014 Luis Alejandro Martínez Faneyth
-#
-# This file is part of Condiment.
-#
-# Condiment is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Condiment is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-This script invokes the setuptools script for Condiment.
-
-For more information about this file, see documentation on
-``condiment/common/setup/utils.py``
-
-"""
+import re
 
 from setuptools import setup
-from condiment import BASEDIR
-from condiment.common.setup.utils import get_setup_data
 
-setup(**get_setup_data(BASEDIR))
+from condiment import (__author__, __email__, __version__, __url__,
+                       __description__)
+
+
+def read_requirements(reqfile):
+    with open(reqfile, 'r') as r:
+        reqs = filter(None, r.read().split('\n'))
+    return [re.sub(r'\t*# pyup.*', r'', x) for x in reqs]
+
+
+setup(
+    name='condiment',
+    version=__version__,
+    author=__author__,
+    author_email=__email__,
+    url=__url__,
+    description=__description__,
+    long_description=open('README.rst').read(),
+    packages=['condiment'],
+    package_dir={'condiment': 'condiment'},
+    include_package_data=True,
+    install_requires=read_requirements('requirements.txt'),
+    license=open('COPYING.rst').read(),
+    zip_safe=False,
+    keywords=['odoo', 'requirements'],
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        # 'Programming Language :: Python :: 3.11',
+    ],
+    test_suite='tests',
+    tests_require=read_requirements('requirements-dev.txt')
+)

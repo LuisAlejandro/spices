@@ -1,4 +1,13 @@
-recursive-include condiment *
-global-exclude *.pyc
-global-exclude *.png
-global-exclude *.mo
+include AUTHORS.rst
+include CONTRIBUTING.rst
+include COPYING.rst
+include HISTORY.rst
+include LICENSE.rst
+include README.rst
+include requirements.txt
+include requirements-dev.txt
+
+recursive-include docs *
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

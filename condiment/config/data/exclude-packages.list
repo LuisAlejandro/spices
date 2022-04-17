@@ -1,9 +1,0 @@
-condiment.data
-condiment.tests
-condiment.config
-dist
-build
-virtualenv
-ez_setup
-distribute_setup
-*.egg

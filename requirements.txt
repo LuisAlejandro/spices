@@ -1,1 +1,2 @@
-condiment/config/data/python-dependencies.list
+sh==1.14.2
+lxml==4.8.0

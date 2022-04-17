@@ -1,5 +1,0 @@
-doc-warnings: true
-test-warnings: true
-strictness: veryhigh
-max-line-length: 80
-autodetect: true

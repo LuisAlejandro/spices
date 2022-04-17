@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="afr_document_partner_balance">
+            <t t-call="account_financial_report.external_layout">
+                <div t-foreach="objects" t-as="o">
+                    <!--VARIABLES TO BE USED LATER-->
+                    <t t-set="col" t-value="o.columns"/>
+
+                    <!-- CALLING HEADER and FOOTER -->
+                    <t t-call="account_financial_report.external_layout_header"/>
+                    <t t-call="account_financial_report.external_layout_footer"/>
+
+                    <!-- DEVELOPING PAGE/BODY -->
+                    <div class="page">
+                        <table class="basic_table"  width="100%" id='table_body'>
+                            <thead>
+                                <tr>
+                                    <td class="celdaTituloTabla" style="text-align:right;"><strong>CODE</strong></td>
+                                    <td class="celdaTituloTabla"><strong>ACCOUNT</strong></td>
+
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('four', 'five')"><strong>INIT. BAL.</strong></td>
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('two', 'four', 'five')"><strong>DEBIT</strong></td>
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('two', 'four', 'five')"><strong>CREDIT</strong></td>
+                                    <td class="celdaTituloTabla" style="text-align:right;" t-if="col in ('one', 'four', 'five')"><strong>BALANCE</strong></td>
+                                </tr>
+
+                                <tr>
+                                    <td> </td>
+                                    <td>
+                                        <para style="TITLES_NEW">
+                                            <font>PARTNER</font>
+                                        </para>
+                                    </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="[x for x in lines(data['form']) if x.get('type')!= 'view' ]" t-as="line">
+                                    <tr class="prueba">
+                                        <i>
+                                        <td class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['label']">
+                                                <span t-esc="line['code']"/>
+                                            </t>
+                                        </td>
+                                        </i>
+                                        <td class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <span t-esc="line['name'].title()"/>
+                                        </td>
+                                        <td t-if="col in ('four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('balanceinit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('two', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('debit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('two', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('credit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="col in ('one', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                            <t t-if="line['total']">
+                                                <span t-esc="formatLang(line.get('balance', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <t t-foreach="line.get('partner')" t-as="m">
+                                        <tr>
+                                            <td>
+                                            </td>
+                                            <td>
+                                                <span t-esc="m['partner_name']"/>
+                                            </td>
+                                            <td t-if="col in ('four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                                <span t-esc="formatLang(m.get('balanceinit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </td>
+                                            <td t-if="col in ('two', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                                <span t-esc="formatLang(m.get('debit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </td>
+                                            <td t-if="col in ('two', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                                <span t-esc="formatLang(m.get('credit', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </td>
+                                            <td t-if="col in ('one', 'four', 'five')" class="celdaLineData" style="text-align:right;font-style:italic;">
+                                                <span t-esc="formatLang(m.get('balance', 0) * line.get('change_sign',1.0), digits=2, grouping=True)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="afr_template_partner_balance">
+            <t t-call="account_financial_report.html_container">
+                <t t-foreach="doc_ids" t-as="doc_id">
+                    <t t-raw="translate_doc(doc_id, doc_model, 'company_id.partner_id.lang', 'account_financial_report.afr_document_partner_balance')"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>
