@@ -26,12 +26,12 @@ setup(
     author_email=__email__,
     url=__url__,
     description=__description__,
-    long_description=open('README.rst').read(),
+    long_description=open('README.short.rst').read(),
     packages=['spices'],
     package_dir={'spices': 'spices'},
     include_package_data=True,
     install_requires=install_requires,
-    license='GNU General Public License v3 (GPLv3)',
+    license='GPLv3',
     zip_safe=False,
     keywords=['odoo', 'requirements'],
     classifiers=[
@@ -43,7 +43,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
-        # 'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.11',
     ],
     test_suite='tests',
     tests_require=tests_require

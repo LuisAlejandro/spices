@@ -81,7 +81,9 @@ install directlty from GitHub like this::
 Usage
 -----
 
-.. include:: ../USAGE.rst
+.. _USAGE.rst: https://github.com/LuisAlejandro/spices/blob/develop/USAGE.rst
+
+See USAGE.rst_ for details.
 
 Getting help
 ============
@@ -95,22 +97,22 @@ ask your question on StackOverflow_ (tag it ``spices``) or drop me an email at l
 Contributing
 ============
 
-.. _CONTRIBUTING.rst: CONTRIBUTING.rst
+.. _CONTRIBUTING.rst: https://github.com/LuisAlejandro/spices/blob/develop/CONTRIBUTING.rst
 
 See CONTRIBUTING.rst_ for details.
 
 Release history
 ===============
 
-.. _HISTORY.rst: HISTORY.rst
+.. _HISTORY.rst: https://github.com/LuisAlejandro/spices/blob/develop/HISTORY.rst
 
 See HISTORY.rst_ for details.
 
 License
 =======
 
-.. _AUTHORS.rst: AUTHORS.rst
-.. _GPL-3 License: LICENSE
+.. _AUTHORS.rst: https://github.com/LuisAlejandro/spices/blob/develop/AUTHORS.rst
+.. _GPL-3 License: https://github.com/LuisAlejandro/spices/blob/develop/LICENSE
 
 Copyright 2016-2022, Spices Developers (read AUTHORS.rst_ for a full list of copyright holders).
 
