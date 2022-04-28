@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Please refer to AUTHORS.rst for a complete list of Copyright holders.
-# Copyright (C) 2016-2022, Condiment Developers.
+# Copyright (C) 2016-2022, Spices Developers.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,12 +15,21 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+``pipsalabim`` is just black magic.
+
+Spices is a package that studies the codebase of your project in search
+for internal and external imports. It then discards the imports that are
+satisfied with internal code or with the standard library and finally
+searches the `PyPIContents`_ index to list which packages satisfy your imports.
+
+.. _PyPIContents: https://github.com/LuisAlejandro/pypicontents
 
 """
 
-The condiment.common package contains all the basic functions and modules.
 
-This package contains all the functions and modules that can be reused
-throughout the entire project.
-
-"""
+__author__ = 'Luis Alejandro Martínez Faneyth'
+__email__ = 'luis@collagelabs.org'
+__version__ = '0.0.1'
+__url__ = 'https://github.com/LuisAlejandro/spices'
+__description__ = ('')

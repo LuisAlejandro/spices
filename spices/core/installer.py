@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Please refer to AUTHORS.rst for a complete list of Copyright holders.
-# Copyright (C) 2016-2022, Condiment Developers.
+# Copyright (C) 2016-2022, Spices Developers.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-from __future__ import with_statement, print_function
 
 import os
 import re
@@ -34,7 +32,7 @@ from ..config.distributions import DISTRIBUTIONS
 
 class Installer(object):
 
-    def __init__(self, condiments):
+    def __init__(self, spicess):
         self.distname = ''
         self.codename = ''
         self.release_data = {}
@@ -61,7 +59,7 @@ class Installer(object):
             'l': 'label'
         }
 
-        self.condiments = condiments
+        self.spicess = spicess
         self.distributions = DISTRIBUTIONS
         self.codenames = {}
         self.revcodenames = {}

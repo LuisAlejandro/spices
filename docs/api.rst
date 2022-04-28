@@ -2,34 +2,34 @@
 Internal API
 ============
 
-condiment package
+spices package
 -----------------
 
-.. automodule:: condiment
+.. automodule:: spices
     :members:
     :private-members:
     :special-members:
 
-condiment.bundle submodule
+spices.bundle submodule
 --------------------------
 
-.. automodule:: condiment.bundle
+.. automodule:: spices.bundle
     :members:
     :private-members:
     :special-members:
 
-condiment.environment submodule
+spices.environment submodule
 -------------------------------
 
-.. automodule:: condiment.environment
+.. automodule:: spices.environment
     :members:
     :private-members:
     :special-members:
 
-condiment.utils submodule
+spices.utils submodule
 -------------------------
 
-.. automodule:: condiment.utils
+.. automodule:: spices.utils
     :members:
     :private-members:
     :special-members:

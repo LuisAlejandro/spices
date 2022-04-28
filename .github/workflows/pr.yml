@@ -14,7 +14,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
-    if: github.repository == 'LuisAlejandro/condiment'
+    if: github.repository == 'LuisAlejandro/spices'
     strategy:
       matrix:
         include:
@@ -68,12 +68,12 @@ jobs:
               dockershelf/python:${PYTHON_VERSION} \
               bash -c "pip install . && \
                        cd ${PWD}/tests/cases/debian && \
-                       condiment install"
+                       spices install"
 
   finish:
     name: Finish
     runs-on: ubuntu-20.04
-    if: github.repository == 'LuisAlejandro/condiment'
+    if: github.repository == 'LuisAlejandro/spices'
     needs: build
     steps:
     - name: Coveralls Finished
@@ -85,7 +85,7 @@ jobs:
   approve:
     name: Approve pull request
     runs-on: ubuntu-20.04
-    if: github.repository == 'LuisAlejandro/condiment'
+    if: github.repository == 'LuisAlejandro/spices'
     needs: finish
     steps:
       - name: Approve
@@ -102,7 +102,7 @@ jobs:
   merge:
     name: Merge pull request
     runs-on: ubuntu-20.04
-    if: github.repository == 'LuisAlejandro/condiment'
+    if: github.repository == 'LuisAlejandro/spices'
     needs: approve
     steps:
       - name: Merge

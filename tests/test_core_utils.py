@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Please refer to AUTHORS.rst for a complete list of Copyright holders.
-# Copyright (C) 2016-2022, Condiment Developers.
+# Copyright (C) 2016-2022, Spices Developers.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,23 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import yaml
+import sys
+import unittest
+import doctest
 
-from condiment.core.installer import Installer
+
+def load_tests(loader, tests, pattern):
+    tests.addTests(doctest.DocTestSuite('spices.core.utils'))
+    return tests
 
 
-def main(**kwargs):
-
-    currdir = os.getcwd()
-    condimentpath = os.path.join(currdir, '.condiment.yml')
-
-    if not os.path.isfile(condimentpath):
-        print('')
-        return 1
-
-    with open(condimentpath) as c:
-        installer = Installer(yaml.safe_load(c.read()))
-        installer.get_distro_data()
-        installer.normalize_distro_data()
-        installer.check_binaries()
+if __name__ == '__main__':
+    sys.exit(unittest.main())

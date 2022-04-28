@@ -5,7 +5,7 @@ import re
 
 from setuptools import setup
 
-from condiment import (__author__, __email__, __version__, __url__,
+from spices import (__author__, __email__, __version__, __url__,
                        __description__)
 
 
@@ -20,15 +20,15 @@ tests_require = read_requirements('requirements.txt') + \
     read_requirements('requirements-dev.txt')
 
 setup(
-    name='condiment',
+    name='spices',
     version=__version__,
     author=__author__,
     author_email=__email__,
     url=__url__,
     description=__description__,
     long_description=open('README.rst').read(),
-    packages=['condiment'],
-    package_dir={'condiment': 'condiment'},
+    packages=['spices'],
+    package_dir={'spices': 'spices'},
     include_package_data=True,
     install_requires=install_requires,
     license='GNU General Public License v3 (GPLv3)',

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Please refer to AUTHORS.rst for a complete list of Copyright holders.
-# Copyright (C) 2016-2022, Condiment Developers.
+# Copyright (C) 2016-2022, Spices Developers.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,35 +18,9 @@
 
 """
 
-This module contains common juju Exceptions.
+The spices.common package contains all the basic functions and modules.
 
-This file holds the generic errors which are sensible for several
-areas of juju.
+This package contains all the functions and modules that can be reused
+throughout the entire project.
 
 """
-
-
-class CondimentError(Exception):
-
-    """
-
-    All errors in juju are subclasses of this.
-
-    This error should not be raised by itself, though, since it means
-    pretty much nothing.  It's useful mostly as something to catch instead.
-
-    """
-
-
-class CannotIdentifyDistribution(CondimentError):
-    """"""
-
-    def __str__(self):
-        return ("We could not identify your distribution.")
-
-
-class UnsupportedDistribution(CondimentError):
-    """"""
-
-    def __str__(self):
-        return ("Your distribution is not supported.")

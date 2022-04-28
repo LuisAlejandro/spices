@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Please refer to AUTHORS.rst for a complete list of Copyright holders.
-# Copyright (C) 2016-2022, Condiment Developers.
+# Copyright (C) 2016-2022, Spices Developers.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 """
 ``pipsalabim.cli`` is a module for handling the command line interface.
 
-This module handles the commands for using Condiment. It also parses
+This module handles the commands for using Spices. It also parses
 parameters, show help, version and controls the logging level.
 """
 

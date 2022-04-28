@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/LuisAlejandro/condiment/issues.
+Report bugs at https://github.com/LuisAlejandro/spices/issues.
 
 If you are reporting a bug, please include:
 
@@ -38,14 +38,14 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-Condiment could always use more documentation, whether as part of the
-official Condiment docs, in docstrings, or even on the web in blog posts,
+Spices could always use more documentation, whether as part of the
+official Spices docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/LuisAlejandro/condiment/issues.
+The best way to send feedback is to file an issue at https://github.com/LuisAlejandro/spices/issues.
 
 If you are proposing a feature:
 
@@ -57,17 +57,17 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `condiment` for local development.
+Ready to contribute? Here's how to set up `spices` for local development.
 
-1. Fork the `condiment` repo on GitHub.
+1. Fork the `spices` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/condiment.git
+    $ git clone git@github.com:your_name_here/spices.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
-    $ mkvirtualenv condiment
-    $ cd condiment/
+    $ mkvirtualenv spices
+    $ cd spices/
     $ python setup.py develop
 
 4. Create a branch for local development::
@@ -78,7 +78,7 @@ Ready to contribute? Here's how to set up `condiment` for local development.
 
 5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
 
-    $ flake8 condiment
+    $ flake8 spices
     $ python3 -m unittest -v -f
     $ tox
 
@@ -101,7 +101,7 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. Check https://github.com/LuisAlejandro/condiment/actions
+3. Check https://github.com/LuisAlejandro/spices/actions
    and make sure that the tests pass for all supported Python versions.
 
 Tips

@@ -1,0 +1,14 @@
+
+dependencies:
+  debian:
+  alpine:
+  archlinux:
+  centos:
+  fedora:
+  gentoo:
+  ubuntu:
+  npm:
+  yarn:
+  bundler:
+  pip:
+  docker:

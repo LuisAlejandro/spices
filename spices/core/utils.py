@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Please refer to AUTHORS.rst for a complete list of Copyright holders.
-# Copyright (C) 2016-2022, Condiment Developers.
+# Copyright (C) 2016-2022, Spices Developers.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 
 """
 
-condiment.common.utils
+spices.common.utils
 ===================
 
-This module contains common and low level functions to all modules in Condiment.
+This module contains common and low level functions to all modules in Spices.
 
 """
 

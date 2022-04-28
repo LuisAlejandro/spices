@@ -49,76 +49,76 @@ clean-docs:
 	rm -fr docs/_build
 
 lint: start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment flake8 condiment
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices flake8 spices
 
 test: start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment python3 -m unittest -v -f
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices python3 -m unittest -v -f
 
 test-all: start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment tox
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices tox
 
 coverage: start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment coverage run --source condiment -m unittest -v -f
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment coverage report -m
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment coverage html
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices coverage run --source spices -m unittest -v -f
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices coverage report -m
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs:
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment make -C docs clean
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment make -C docs html
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices make -C docs clean
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices make -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment watchmedo shell-command -p '*.rst' -c 'make -C docs html' -R -D .
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices watchmedo shell-command -p '*.rst' -c 'make -C docs html' -R -D .
 
 release: clean start dist
 	twine upload -s -i luis@luisalejandro.org dist/*
 
 dist: clean start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment python3 -m build
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices python3 -m build
 	ls -l dist
 
 install: clean start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment pip3 install .
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices pip3 install .
 
 image:
-	@docker-compose -p condiment -f docker-compose.yml build \
+	@docker-compose -p spices -f docker-compose.yml build \
 		--force-rm --pull
 
 start:
-	@docker-compose -p condiment -f docker-compose.yml up \
+	@docker-compose -p spices -f docker-compose.yml up \
 		--remove-orphans -d
 
 console: start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment bash
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices bash
 
 stop:
-	@docker-compose -p condiment -f docker-compose.yml stop
+	@docker-compose -p spices -f docker-compose.yml stop
 
 down:
-	@docker-compose -p condiment -f docker-compose.yml down \
+	@docker-compose -p spices -f docker-compose.yml down \
 		--remove-orphans
 
 destroy:
-	@docker-compose -p condiment -f docker-compose.yml down \
+	@docker-compose -p spices -f docker-compose.yml down \
 		--rmi all --remove-orphans -v
 
 virtualenv: start
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment python3 -m venv --clear --copies ./virtualenv
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment ./virtualenv/bin/pip install -U wheel setuptools
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user luisalejandro condiment ./virtualenv/bin/pip install -r requirements.txt -r requirements-dev.txt
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices python3 -m venv --clear --copies ./virtualenv
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices ./virtualenv/bin/pip install -U wheel setuptools
+	@docker-compose -p spices -f docker-compose.yml exec \
+		--user luisalejandro spices ./virtualenv/bin/pip install -r requirements.txt -r requirements-dev.txt

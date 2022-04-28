@@ -15,3 +15,27 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import sys
+import doctest
+import unittest
+
+from spices.core.logger import logger
+
+
+class TestLogger(unittest.TestCase):
+
+    def setUp(self):
+        logger.start()
+
+    def test_01_default_level(self):
+        pass
+
+
+def load_tests(loader, tests, pattern):
+    tests.addTests(doctest.DocTestSuite('spices.core.logger'))
+    return tests
+
+
+if __name__ == '__main__':
+    sys.exit(unittest.main())
