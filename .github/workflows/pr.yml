@@ -14,6 +14,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
+    if: github.repository == 'LuisAlejandro/condiment'
     strategy:
       matrix:
         include:
@@ -27,34 +28,73 @@ jobs:
             toxenv: "py311"
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+        with:
+          ref: develop
+          fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Building project
-        env:
-          TOXENV: ${{ matrix.toxenv }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Installing dependencies
         run: |
           sudo apt-get install libxml2-dev libxslt-dev
-          pip install -r requirements-dev.txt
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Measuring coverage
+        env:
+          TOXENV: ${{ matrix.toxenv }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           tox -e ${TOXENV}
-          coveralls --service=github || coveralls --service=github-actions
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-py${{ matrix.python-version }}
+          path-to-lcov: ./.lcov
+          parallel: true
+      - name: Functional test
+        env:
+          TOXENV: ${{ matrix.toxenv }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          if [ "${TOXENV}" == "py311" ]; then
+            PYTHON_VERSION="3.11"
+          fi
+          docker run \
+              -v ${PWD}:${PWD} \
+              -w ${PWD} \
+              dockershelf/python:${PYTHON_VERSION} \
+              bash -c "pip install . && \
+                       cd ${PWD}/tests/cases/debian && \
+                       condiment install"
+
+  finish:
+    name: Finish
+    runs-on: ubuntu-20.04
+    if: github.repository == 'LuisAlejandro/condiment'
+    needs: build
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
 
   approve:
     name: Approve pull request
     runs-on: ubuntu-20.04
-    needs: build
+    if: github.repository == 'LuisAlejandro/condiment'
+    needs: finish
     steps:
       - name: Approve
-        uses: hmarr/auto-approve-action@v2.1.0
+        uses: hmarr/auto-approve-action@v2.2.1
         if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
         with:
           github-token: "${{ secrets.PERSONAL_ACCESS_TOKEN }}"
       - name: Approve
-        uses: hmarr/auto-approve-action@v2.1.0
+        uses: hmarr/auto-approve-action@v2.2.1
         if: github.actor == 'LuisAlejandro'
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -62,6 +102,7 @@ jobs:
   merge:
     name: Merge pull request
     runs-on: ubuntu-20.04
+    if: github.repository == 'LuisAlejandro/condiment'
     needs: approve
     steps:
       - name: Merge

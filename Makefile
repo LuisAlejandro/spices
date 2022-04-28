@@ -9,7 +9,7 @@ except:
 webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
+BROWSER := python3 -c "$$BROWSER_PYSCRIPT"
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
@@ -48,42 +48,49 @@ clean-test:
 clean-docs:
 	rm -fr docs/_build
 
-lint:
-	flake8 condiment tests
+lint: start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment flake8 condiment
 
-test:
-	python setup.py test
+test: start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment python3 -m unittest -v -f
 
-test-all:
-	tox
+test-all: start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment tox
 
-coverage:
-	coverage run --source condiment setup.py test
-	coverage report -m
-	coverage html
+coverage: start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment coverage run --source condiment -m unittest -v -f
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment coverage report -m
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs:
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment make -C docs clean
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment make -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
-servedocs: docs
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+servedocs: docs start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment watchmedo shell-command -p '*.rst' -c 'make -C docs html' -R -D .
 
-release: clean
-	python setup.py sdist upload
-	python setup.py bdist_wheel upload
+release: clean start dist
+	twine upload -s -i luis@luisalejandro.org dist/*
 
-dist: clean
-	python setup.py sdist
-	python setup.py bdist_wheel
+dist: clean start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment python3 -m build
 	ls -l dist
 
-install: clean
-	python setup.py install
-
-
+install: clean start
+	@docker-compose -p condiment -f docker-compose.yml exec \
+		--user luisalejandro condiment pip3 install .
 
 image:
 	@docker-compose -p condiment -f docker-compose.yml build \
@@ -95,7 +102,7 @@ start:
 
 console: start
 	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user condiment condiment bash
+		--user luisalejandro condiment bash
 
 stop:
 	@docker-compose -p condiment -f docker-compose.yml stop
@@ -110,10 +117,8 @@ destroy:
 
 virtualenv: start
 	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user condiment condiment python -m venv --clear --copies ./winvenv
+		--user luisalejandro condiment python3 -m venv --clear --copies ./virtualenv
 	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user condiment condiment ./winvenv/bin/pip install -U wheel setuptools
+		--user luisalejandro condiment ./virtualenv/bin/pip install -U wheel setuptools
 	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user condiment condiment ./winvenv/bin/pip install -r requirements.txt
-	@docker-compose -p condiment -f docker-compose.yml exec \
-		--user condiment condiment ./winvenv/bin/pip install -r requirements-dev.txt
+		--user luisalejandro condiment ./virtualenv/bin/pip install -r requirements.txt -r requirements-dev.txt

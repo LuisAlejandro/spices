@@ -10,6 +10,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
+    if: github.repository == 'LuisAlejandro/condiment'
     strategy:
       matrix:
         include:
@@ -28,13 +29,29 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Building project
-        env:
-          TOXENV: ${{ matrix.toxenv }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Installing dependencies
         run: |
           sudo apt-get install libxml2-dev libxslt-dev
-          pip install -r requirements-dev.txt
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Measuring coverage
+        env:
+          TOXENV: ${{ matrix.toxenv }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           tox -e ${TOXENV}
-          coveralls --service=github || coveralls --service=github-actions
+      - name: Functional test
+        env:
+          TOXENV: ${{ matrix.toxenv }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          if [ "${TOXENV}" == "py311" ]; then
+            PYTHON_VERSION="3.11"
+          fi
+          docker run \
+              -v ${PWD}:${PWD} \
+              -w ${PWD} \
+              dockershelf/python:${PYTHON_VERSION} \
+              bash -c "pip install . && \
+                       cd ${PWD}/tests/cases/debian && \
+                       condiment install"

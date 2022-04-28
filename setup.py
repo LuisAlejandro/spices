@@ -15,6 +15,10 @@ def read_requirements(reqfile):
     return [re.sub(r'\t*# pyup.*', r'', x) for x in reqs]
 
 
+install_requires = read_requirements('requirements.txt')
+tests_require = read_requirements('requirements.txt') + \
+    read_requirements('requirements-dev.txt')
+
 setup(
     name='condiment',
     version=__version__,
@@ -26,8 +30,8 @@ setup(
     packages=['condiment'],
     package_dir={'condiment': 'condiment'},
     include_package_data=True,
-    install_requires=read_requirements('requirements.txt'),
-    license=open('COPYING.rst').read(),
+    install_requires=install_requires,
+    license='GNU General Public License v3 (GPLv3)',
     zip_safe=False,
     keywords=['odoo', 'requirements'],
     classifiers=[
@@ -42,5 +46,5 @@ setup(
         # 'Programming Language :: Python :: 3.11',
     ],
     test_suite='tests',
-    tests_require=read_requirements('requirements-dev.txt')
+    tests_require=tests_require
 )

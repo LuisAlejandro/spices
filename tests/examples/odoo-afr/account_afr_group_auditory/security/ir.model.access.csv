@@ -1,2 +1,0 @@
-id,group_id/id,name,model_id/id,perm_read,perm_write,perm_create,perm_unlink
-account_financial_report group_ua,account_group_auditory.group_account_user_audit,account_financial_report group_ua,account_financial_report.model_afr,1,0,0,0
