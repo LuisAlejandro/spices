@@ -30,6 +30,7 @@ searches the `PyPIContents`_ index to list which packages satisfy your imports.
 
 __author__ = 'Luis Alejandro Martínez Faneyth'
 __email__ = 'luis@collagelabs.org'
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 __url__ = 'https://github.com/LuisAlejandro/spices'
-__description__ = ('')
+__description__ = ('A universal dependency resolver:'
+                   'one installer to rule them all.')

@@ -24,15 +24,20 @@ from ..core.installer import Installer
 
 def main(**kwargs):
 
+    # globalsw = kwargs.get('global')
+    # local = kwargs.get('local')
+    # overwrite_os_repo = kwargs.get('overwrite-os-repo')
+
+
     currdir = os.getcwd()
     spicespath = os.path.join(currdir, '.spices.yml')
 
     if not os.path.isfile(spicespath):
-        print('No .spices.yml file found.')
-        return 1
+        raise Exception('No .spices.yml file found.')
 
     with open(spicespath) as c:
-        installer = Installer(yaml.safe_load(c.read()))
-        installer.get_distro_data()
-        installer.normalize_distro_data()
-        installer.check_binaries()
+        installer = Installer(
+            spices=yaml.safe_load(c.read()),
+            # local=local
+        )
+        installer.execute()

@@ -25,11 +25,17 @@ from .logger import logger
 
 class Distribution(object):
 
-    def __init__(self, distname, codename, containers, distributions):
+    def __init__(self, distname, codename, spicesdata, distributions):
         self.distributions = distributions
         self.distname = distname
         self.codename = codename
-        self.containers = containers
+        self.spices = Spices(spicesdata)
+
+    # populate common managers
+    # check for missing managers
+    # filter needed managers 
+
+    
 
     def get_binaries(self):
         binaries = []

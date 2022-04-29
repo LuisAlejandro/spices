@@ -18,7 +18,6 @@
 
 import os
 import re
-import shutil
 from subprocess import Popen, PIPE
 from distutils.spawn import find_executable
 
@@ -27,12 +26,15 @@ from .errors import (CannotIdentifyDistribution,
                      UnsupportedDistribution)
 from .utils import flatten_list
 from .logger import logger
+from .pkgindex import archlinux_versions, get_debian_versions, \
+    get_alpine_versions
 from ..config.distributions import DISTRIBUTIONS
 
 
 class Installer(object):
 
-    def __init__(self, spicess):
+    def __init__(self, spices):
+
         self.distname = ''
         self.codename = ''
         self.release_data = {}
@@ -59,10 +61,19 @@ class Installer(object):
             'l': 'label'
         }
 
-        self.spicess = spicess
+        self.spicesdata = spices
         self.distributions = DISTRIBUTIONS
         self.codenames = {}
         self.revcodenames = {}
+
+
+        self.populate_codename_index()
+        self.get_distro_data()
+        self.normalize_distro_data()
+
+    def populate_codename_index(self):
+        
+        pass
 
     def codename_index(self, x):
 
@@ -268,7 +279,7 @@ class Installer(object):
             logger.info('You are using %s (%s).' % (self.distname, self.codename))
             self.distribution = Distribution(self.distname,
                                              self.codename,
-                                             self.containers,
+                                             self.spicesdata,
                                              self.distributions)
         else:
             raise UnsupportedDistribution()
@@ -285,11 +296,7 @@ class Installer(object):
                 return True
         return False
 
-    def check_binaries(self):
-        if not self.distribution.check_binaries():
-            self.install_dependencies()
-
-    def install_dependencies(self):
+    def execute(self):
 
         logger.info('Installing missing dependencies ...')
 
@@ -302,35 +309,8 @@ class Installer(object):
                     metadata.update({'dependencies': dep.get(manager)})
                     metadata.update({'origin': dep.get('origin')})
 
-                    if manager == 'custom':
-                        pass
-                        # self.custom(metadata)
-
-                    else:
-                        self.configure_mirrors(metadata)
-                        self.update_package_db(metadata)
-                        self.install(metadata)
-                        self.deconfigure_mirrors(metadata)
-
-    def configure_mirrors(self, metadata):
-
-        shutil.move(metadata['mirrorconf'], '%s.bk' % metadata['mirrorconf'])
-        shutil.move(metadata['mirrorlist'], '%s.bk' % metadata['mirrorlist'])
-
-        with open(metadata['mirrorconf'], 'a') as mirrorconf:
-            mirrorconf.write(metadata['mirrorboiler'])
-
-            for o in metadata['origin']:
-                mirrorconf.write(metadata['mirrortemplate'] % {
-                    'origin': o,
-                    'url': metadata['mirrors'][o],
-                    'sections': ' '.join(metadata.get('sections', []))
-                })
-
-    def deconfigure_mirrors(self, metadata):
-
-        shutil.move('%s.bk' % metadata['mirrorconf'], metadata['mirrorconf'])
-        shutil.move('%s.bk' % metadata['mirrorlist'], metadata['mirrorlist'])
+                    self.update_package_db(metadata)
+                    self.install(metadata)
 
     def update_package_db(self, metadata):
 
@@ -373,20 +353,3 @@ class Installer(object):
                 logger.info(str(line).strip('\n'))
             else:
                 break
-
-    def custom(self, metadata):
-
-        if 'env' in metadata:
-            self.env.update(metadata['env'])
-
-        for cmd in metadata.get('dependencies'):
-            args = cmd.split()
-
-            result = Popen(args=args, stdout=PIPE, stderr=PIPE,
-                           env=self.env, close_fds=True)
-
-            for line in iter(result.stdout.readline, ''):
-                if line:
-                    logger.info(str(line).strip('\n'))
-                else:
-                    break

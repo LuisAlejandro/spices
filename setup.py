@@ -31,7 +31,7 @@ setup(
     package_dir={'spices': 'spices'},
     include_package_data=True,
     install_requires=install_requires,
-    license='GPLv3',
+    # license='GPLv3',
     zip_safe=False,
     keywords=['odoo', 'requirements'],
     classifiers=[
