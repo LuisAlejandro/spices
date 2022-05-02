@@ -17,27 +17,52 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-import yaml
 
+import yamale
+
+from ..core.logger import logger
+from ..core.errors import SpicesNotFound, SchemaNotFound, ValidationError
 from ..core.installer import Installer
+
+
+def validate(spicespath, schemapath):
+
+    try:
+        schema = yamale.make_schema(schemapath, parser='ruamel')
+        data = yamale.make_data(spicespath, parser='ruamel')
+        yamale.validate(schema, data)
+        return data
+    except yamale.YamaleError as e:
+        for result in e.results:
+            logger.error(
+                "Error validating data "
+                "'%s' with '%s'\n\t" % (result.data, result.schema)
+            )
+            for error in result.errors:
+                raise ValidationError(error)
 
 
 def main(**kwargs):
 
-    # globalsw = kwargs.get('global')
-    # local = kwargs.get('local')
-    # overwrite_os_repo = kwargs.get('overwrite-os-repo')
-
-
+    conffile = kwargs.get('conffile')
     currdir = os.getcwd()
-    spicespath = os.path.join(currdir, '.spices.yml')
+    filedir = os.path.dirname(os.path.abspath(__file__))
+    basedir = os.path.abspath(os.path.join(filedir, '..'))
+    schemadir = os.path.join(basedir, 'config')
+    schemapath = os.path.join(schemadir, 'schema.yml')
+
+    if conffile:
+        spicespath = os.path.abspath(conffile)
+    else:
+        spicespath = os.path.join(currdir, '.spices.yml')
 
     if not os.path.isfile(spicespath):
-        raise Exception('No .spices.yml file found.')
+        raise SpicesNotFound(currdir)
 
-    with open(spicespath) as c:
-        installer = Installer(
-            spices=yaml.safe_load(c.read()),
-            # local=local
-        )
-        installer.execute()
+    if not os.path.isfile(schemapath):
+        raise SchemaNotFound(schemadir)
+
+    spices = validate(spicespath, schemapath)
+
+    installer = Installer(spices)
+    # installer.execute()

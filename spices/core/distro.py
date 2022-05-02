@@ -16,46 +16,43 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from __future__ import with_statement, print_function
-
-from distutils.spawn import find_executable
-
+from .errors import UnsupportedDistribution
+from .spices import Spices
 from .logger import logger
 
 
 class Distribution(object):
 
-    def __init__(self, distname, codename, spicesdata, distributions):
+    derivatives = {
+        'ubuntu': 'debian'
+    }
+
+    def __init__(self, distname, codename, version, data, distributions):
         self.distributions = distributions
         self.distname = distname
         self.codename = codename
-        self.spices = Spices(spicesdata)
+        self.version = version
+        self.command_config = {}
+        self.distro_manager_map = {}
+        self.allowed_managers = []
+        self.spices = Spices(data)
+        self.metadistro = self.get_metadistro()
 
-    # populate common managers
-    # check for missing managers
-    # filter needed managers 
+    def get_metadistro(self):
+        if self.distname not in self.derivatives:
+            raise UnsupportedDistribution()
+        return self.metadistro[self.distname]
 
-    
+    def update_package_db(self):
+        for cmd in self.spices.commandlist:
+            enabled_distros = cmd.get_enabled_distros()
+            if self.distname in enabled_distros or \
+               self.metadistro in enabled_distros:
+                cmd.update()
 
-    def get_binaries(self):
-        binaries = []
-        for dep in self.get_dependencies():
-            if dep.get('containers') == self.containers \
-               and dep.get('binaries'):
-                binaries.extend(dep.get('binaries'))
-        return binaries
-
-    def get_managers(self):
-        return self.distributions[self.distname]['managers']
-
-    def get_dependencies(self):
-        return self.distributions[self.distname]['dependencies'][self.codename]
-
-    def check_binaries(self):
-        logger.info('Checking for dependencies ...')
-        for b in self.get_binaries():
-            if not find_executable(b):
-                logger.info('%s not found!' % b)
-                return False
-        logger.info('Everything ok!')
-        return True
+    def install(self):
+        for cmd in self.spices.commandlist:
+            enabled_distros = cmd.get_enabled_distros()
+            if self.distname in enabled_distros or \
+               self.metadistro in enabled_distros:
+                cmd.install()

@@ -13,6 +13,18 @@ jobs:
     if: github.repository == 'LuisAlejandro/spices'
     strategy:
       matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11.0-alpha.5"]
+        distro:
+          - alpine
+          - arch
+          - centos
+          - debian
+          - fedora
+          - gentoo
+        npm: [true, false]
+        yarn: [true, false]
+        bundler: [true, false]
+        pip: [true, false]
         include:
           - python-version: "3.8"
             toxenv: "py38"

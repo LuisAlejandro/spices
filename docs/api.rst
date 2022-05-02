@@ -3,33 +3,33 @@ Internal API
 ============
 
 spices package
------------------
+--------------
 
 .. automodule:: spices
     :members:
     :private-members:
     :special-members:
 
-spices.bundle submodule
---------------------------
+spices.api submodule
+--------------------
 
-.. automodule:: spices.bundle
+.. automodule:: spices.api
     :members:
     :private-members:
     :special-members:
 
-spices.environment submodule
--------------------------------
+spices.config submodule
+-----------------------
 
-.. automodule:: spices.environment
+.. automodule:: spices.config
     :members:
     :private-members:
     :special-members:
 
-spices.utils submodule
--------------------------
+spices.core submodule
+---------------------
 
-.. automodule:: spices.utils
+.. automodule:: spices.core
     :members:
     :private-members:
     :special-members:

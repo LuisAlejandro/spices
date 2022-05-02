@@ -21,14 +21,18 @@ import re
 from subprocess import Popen, PIPE
 from distutils.spawn import find_executable
 
+from dotenv import dotenv_values
+from packaging.version import Version
+
 from .distro import Distribution
 from .errors import (CannotIdentifyDistribution,
                      UnsupportedDistribution)
 from .utils import flatten_list
 from .logger import logger
-from .pkgindex import archlinux_versions, get_debian_versions, \
-    get_alpine_versions
-from ..config.distributions import DISTRIBUTIONS
+from .pkgindex import debian_codename_index, arch_codename_index, \
+    fedora_codename_index, alpine_codename_index, gentoo_codename_index, \
+    centos_codename_index
+from ..config.distributions import distrodata
 
 
 class Installer(object):
@@ -37,19 +41,22 @@ class Installer(object):
 
         self.distname = ''
         self.codename = ''
-        self.release_data = {}
-        self.dpkg_origins_data = {}
-        self.apt_policy_data = []
-        self.lsb = find_executable('lsb_release')
+        self.version = ''
+        self.metadistname = ''
+        self.metacodename = ''
+        # self.release_data = {}
+        # self.dpkg_origins_data = {}
+        # self.apt_policy_data = []
+        self.lsb_release_command = find_executable('lsb_release')
         self.os_release = '/etc/os-release'
         self.lsb_release = '/etc/lsb-release'
-        self.arch_release = '/etc/arch-release'
-        self.fedora_release = '/etc/fedora-release'
-        self.centos_release = '/etc/centos-release'
-        self.gentoo_release = '/etc/gentoo-release'
-        self.redhat_release = '/etc/redhat-release'
-        self.debian_release = '/etc/debian_version'
         self.dpkg_origins = '/etc/dpkg/origins/default'
+        self.debian_release = '/etc/debian_version'
+        self.fedora_release = '/etc/fedora-release'
+        self.alpine_release = '/etc/alpine-release'
+        self.arch_release = '/etc/arch-release'
+        self.gentoo_release = '/etc/gentoo-release'
+        self.centos_release = '/etc/centos-release'
         self.env = os.environ.copy()
         self.env['LC_ALL'] = 'C'
 
@@ -62,18 +69,28 @@ class Installer(object):
         }
 
         self.spicesdata = spices
-        self.distributions = DISTRIBUTIONS
+        self.distributions = distrodata
         self.codenames = {}
         self.revcodenames = {}
 
-
         self.populate_codename_index()
-        self.get_distro_data()
-        self.normalize_distro_data()
+        # self.get_distro_data()
+        # self.normalize_distro_data()
 
     def populate_codename_index(self):
-        
-        pass
+        logger.info('Generating distributions database')
+        self.distributions['debian']['codenames'] = \
+            debian_codename_index()
+        self.distributions['arch']['codenames'] = \
+            arch_codename_index()
+        self.distributions['fedora']['codenames'] = \
+            fedora_codename_index()
+        self.distributions['alpine']['codenames'] = \
+            alpine_codename_index()
+        self.distributions['centos']['codenames'] = \
+            centos_codename_index()
+        self.distributions['gentoo']['codenames'] = \
+            gentoo_codename_index()
 
     def codename_index(self, x):
 
@@ -88,41 +105,6 @@ class Installer(object):
             else:
                 return suite
         return 0
-
-    def parse_release(self, release):
-
-        try:
-            with open(release) as contentlist:
-                for j in contentlist.read().split('\n'):
-                    if re.findall('=', j):
-                        key = j.split('=')[0].strip().upper()
-                        value = j.split('=')[1].strip('"').lower()
-                        self.release_data[key] = value
-                    elif j:
-                        self.release_data['PRETTY_NAME'] = j.lower()
-
-        except IOError as msg:
-            print(msg)
-
-        return self.release_data
-
-    def parse_dpkg_origins(self, origins):
-
-        try:
-            with open(origins) as contentlist:
-                for j in contentlist.read().split('\n'):
-                    if re.findall(':', j):
-                        key = j.split(':')[0].strip().upper()
-                        value = j.split(':')[1].strip().lower()
-
-                        self.dpkg_origins_data[key] = value
-                    elif j:
-                        self.dpkg_origins_data['PRETTY_NAME'] = j.lower()
-
-        except IOError as msg:
-            print(msg)
-
-        return self.dpkg_origins_data
 
     def parse_apt_policy(self):
 
@@ -171,79 +153,117 @@ class Installer(object):
 
         return releases[0][1]['suite']
 
-    def get_distro_data(self):
+    def parse_os_release(self, release):
+        return dotenv_values(release)
 
-        logger.info('Attempting to identify your distribution ...')
+    def cat_file(self, release):
+        with open(release) as content:
+            return content.read()
 
-        if (not self.distname) and self.lsb:
+    def parse_dpkg_origins(self, origins):
+        dpkg_origins_data = {}
+        with open(origins) as content:
+            contentlist = content.read()
+        for j in contentlist.split('\n'):
+            keyvalue = j.split(':')
+            if len(keyvalue) > 1:
+                dpkg_origins_data[keyvalue[0].strip()] = keyvalue[1].strip()
+        return dpkg_origins_data
 
-            self.distname = Popen(
-                args=['%s' % self.lsb, '-is'], stdout=PIPE, stderr=PIPE,
-                env=self.env, close_fds=True
-                ).communicate()[0].decode('utf-8').split('\n')[0].lower()
+    def cmd_return_full(self, args, env):
+        return Popen(
+            args=args, stdout=PIPE, stderr=PIPE,
+            env=env, close_fds=True
+        ).communicate()[0].decode('utf-8')
 
-            self.codename = Popen(
-                args=['%s' % self.lsb, '-cs'], stdout=PIPE, stderr=PIPE,
-                env=self.env, close_fds=True
-                ).communicate()[0].decode('utf-8').split('\n')[0].lower()
+    def cmd_return_first_line(self, args, env):
+        return Popen(
+            args=args, stdout=PIPE, stderr=PIPE,
+            env=env, close_fds=True
+        ).communicate()[0].decode('utf-8').split('\n')[0]
 
+    def try_lsb_release_command(self):
+        if (not self.distname) and self.lsb_release_command:
+            self.distname = self.cmd_return_first_line(
+                [self.lsb_release_command, '-is'], self.env)
+            self.codename = self.cmd_return_first_line(
+                [self.lsb_release_command, '-cs'], self.env)
+
+    def try_arch_release_file(self):
         if (not self.distname) and os.path.exists(self.arch_release):
             self.distname = 'arch'
-            self.codename = '0.0'
+            self.codename = 'rolling'
+            self.version = 'rolling'
 
+    def try_gentoo_release_file(self):
         if (not self.distname) and os.path.exists(self.gentoo_release):
             self.distname = 'gentoo'
-            self.codename = '0.0'
+            self.codename = 'rolling'
+            self.version = 'rolling'
 
+    def try_fedora_release_file(self):
         if (not self.distname) and os.path.exists(self.fedora_release):
-            self.parse_release(self.fedora_release)
-            self.distname = self.release_data['PRETTY_NAME'].split()[0]
-            self.codename = re.search(
-                r'(.*)\(.*\)',
-                self.release_data['PRETTY_NAME']).group(1).split()[-1]
+            relstr = self.cat_file(self.fedora_release)
+            relarray = relstr.split()
+            version = Version(relarray[2])
+            self.distname = relarray[0]
+            self.version = f'{version.major}'
 
+    def try_centos_release_file(self):
         if (not self.distname) and os.path.exists(self.centos_release):
-            self.parse_release(self.centos_release)
-            self.distname = self.release_data['PRETTY_NAME'].split()[0]
-            self.codename = self.release_data['PRETTY_NAME'].split()[-2]
+            relstr = self.cat_file(self.centos_release)
+            relarray = relstr.split()
+            stream = 'stream' if relarray[1].lower() == 'stream' else ''
+            version = Version(relarray[3])
+            self.distname = relarray[0]
+            self.codename = f'{stream}{version.major}'
 
-        if (not self.distname) and os.path.exists(self.redhat_release):
-            self.parse_release(self.redhat_release)
-            self.distname = self.release_data['PRETTY_NAME'].split()[0]
-            self.codename = self.release_data['PRETTY_NAME'].split()[-2]
-
+    def try_lsb_release_file(self):
         if (not self.distname) and os.path.exists(self.lsb_release):
-            self.parse_release(self.lsb_release)
-            self.distname = self.release_data['DISTRIB_ID']
-            self.codename = self.release_data['DISTRIB_CODENAME']
+            rel = self.parse_os_release(self.lsb_release)
+            self.distname = rel['DISTRIB_ID'] \
+                if 'DISTRIB_ID' in rel else ''
+            self.codename = rel['DISTRIB_CODENAME'] \
+                if 'DISTRIB_CODENAME' in rel else ''
+            self.version = rel['DISTRIB_RELEASE'] \
+                if 'DISTRIB_RELEASE' in rel else ''
 
+    def try_os_release_file(self):
         if (not self.distname) and os.path.exists(self.os_release):
-            self.parse_release(self.os_release)
-            self.distname = self.release_data['ID']
-            self.codename = self.release_data['PRETTY_NAME']
+            rel = self.parse_os_release(self.os_release)
+            self.distname = rel['ID'] if 'ID' in rel else ''
+            self.codename = rel['VERSION_CODENAME'] \
+                if 'VERSION_CODENAME' in rel else ''
+            self.version = rel['VERSION_ID'] if 'VERSION_ID' in rel else ''
 
-            if self.distname == 'debian':
-                self.codename = ''
-
-            elif self.distname == 'elementary-os':
-                self.codename = self.codename.split()[-1]
-
-            else:
-                self.codename = self.codename.split()[-2].strip('()')
-
+    def try_dpkg_origins(self):
         if (not self.distname) and os.path.exists(self.dpkg_origins):
-            self.parse_dpkg_origins(self.dpkg_origins)
-            self.distname = self.dpkg_origins_data['VENDOR']
+            origins = self.parse_dpkg_origins(self.dpkg_origins)
+            self.distname = origins['VENDOR'] if 'VENDOR' in origins else ''
 
+    def try_apt(self):
         if self.distname and (not self.codename) \
            and os.path.exists(self.debian_release):
-            self.parse_release(self.debian_release)
+            rel = self.cat_file(self.debian_release)
 
-            if re.findall(r'.*/.*', self.release_data['PRETTY_NAME']):
+            if re.findall(r'.*/.*', rel):
                 self.codename = self.get_codename_from_apt(self.distname)
-
             else:
-                self.codename = self.release_data['PRETTY_NAME']
+                self.codename = rel
+
+    def get_distro_data(self):
+
+        logger.info('Attempting to identify your distribution')
+
+        self.try_lsb_release_command()
+        self.try_arch_release_file()
+        self.try_gentoo_release_file()
+        self.try_fedora_release_file()
+        self.try_centos_release_file()
+        self.try_lsb_release_file()
+        self.try_os_release_file()
+        self.try_dpkg_origins()
+        self.try_apt()
 
         if not (self.distname and self.codename):
             raise CannotIdentifyDistribution()
@@ -269,16 +289,17 @@ class Installer(object):
             self.version = '.'.join(list(filter(None, [major, minor, patch,
                                                        pre, prenum])))
         vermatch = regex.match(self.version)
-        if self.distname == 'ubuntu':
-            self.codename = self.codenames['.'.join(vermatch.group(1, 2))][0]
+        # if self.distname == 'ubuntu':
+        #     self.codename = self.codenames['.'.join(vermatch.group(1, 2))][0]
 
-        else:
-            self.codename = self.codenames[str(float(vermatch.group(1)))][0]
+        # else:
+        self.codename = self.codenames[str(float(vermatch.group(1)))][0]
 
         if self.is_supported_codename():
             logger.info('You are using %s (%s).' % (self.distname, self.codename))
             self.distribution = Distribution(self.distname,
                                              self.codename,
+                                             self.version,
                                              self.spicesdata,
                                              self.distributions)
         else:
@@ -292,64 +313,17 @@ class Installer(object):
     def is_supported_codename(self):
         if self.is_supported_distname():
             if (self.codename in
-               self.distributions[self.distname]['dependencies']):
+               self.distributions[self.distname][self.version]):
                 return True
         return False
 
     def execute(self):
-
         logger.info('Installing missing dependencies ...')
+        self.update_package_db()
+        self.install()
 
-        for manager, metadata in self.distribution.get_managers().items():
-            for dep in self.distribution.get_dependencies():
-                if dep.get('containers') == self.containers \
-                   and dep.get(manager):
+    def update_package_db(self):
+        self.distribution.update_package_db()
 
-                    metadata.update({'manager': manager})
-                    metadata.update({'dependencies': dep.get(manager)})
-                    metadata.update({'origin': dep.get('origin')})
-
-                    self.update_package_db(metadata)
-                    self.install(metadata)
-
-    def update_package_db(self, metadata):
-
-        if 'env' in metadata:
-            self.env.update(metadata['env'])
-
-        args = []
-        args.extend([metadata.get('command')])
-        args.extend([metadata.get('update')])
-        args.extend(metadata.get('args'))
-
-        result = Popen(args=args, stdout=PIPE, stderr=PIPE,
-                       env=self.env, close_fds=True)
-
-        for line in iter(result.stdout.readline, ''):
-            if line:
-                logger.info(str(line).strip('\n'))
-            else:
-                break
-
-    def install(self, metadata):
-
-        if 'env' in metadata:
-            self.env.update(metadata['env'])
-
-        if metadata['command'] == 'apt-get':
-            metadata['args'].extend(['-t%s' % metadata['origin'][0]])
-
-        args = []
-        args.extend([metadata.get('command')])
-        args.extend([metadata.get('install')])
-        args.extend(metadata.get('args'))
-        args.extend(metadata.get('dependencies'))
-
-        result = Popen(args=args, stdout=PIPE, stderr=PIPE,
-                       env=self.env, close_fds=True)
-
-        for line in iter(result.stdout.readline, ''):
-            if line:
-                logger.info(str(line).strip('\n'))
-            else:
-                break
+    def install(self):
+        self.distribution.install()

@@ -1,15 +1,54 @@
-
-dependencies:
+version: 1
+managers:
   debian:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   alpine:
-  archlinux:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
+  arch:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   centos:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   fedora:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   gentoo:
-  ubuntu:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   npm:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   yarn:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   bundler:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
   pip:
-  docker:
-  binaries:
+    dependencies:
+      - procps
+    postinstall: |
+      echo "debian"
+  custom: |
+    echo "debian"

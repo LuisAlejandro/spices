@@ -50,3 +50,62 @@ class UnsupportedDistribution(SpicesError):
 
     def __str__(self):
         return ("Your distribution is not supported.")
+
+
+class SpicesAreEmpty(SpicesError):
+    """"""
+
+    def __str__(self):
+        return ("")
+
+
+class ThereAreNoCommands(SpicesError):
+    """"""
+
+    def __str__(self):
+        return ("")
+
+
+class SpicesNotFound(SpicesError):
+    """"""
+
+    def __init__(self, currdir):
+        super().__init__(currdir)
+        self.currdir = currdir
+
+    def __str__(self):
+        return (
+            f"A .spices.yml was not found on current directory {self.currdir}"
+            "\n"
+            "Check https://spices.readthedocs.io/en/latest/ to know how to "
+            "create a Spices file."
+            "\n\n"
+        )
+
+
+class SchemaNotFound(SpicesError):
+    """"""
+
+    def __init__(self, schemadir):
+        super().__init__(schemadir)
+        self.schemadir = schemadir
+
+    def __str__(self):
+        return (
+            f"A schema was not found on the schema directory {self.schemadir}"
+            "\n"
+            "Go to https://spices.readthedocs.io/en/latest/ and follow "
+            "instructions to reinstall Spices."
+            "\n\n"
+        )
+
+
+class ValidationError(SpicesError):
+    """"""
+
+    def __init__(self, details):
+        super().__init__(details)
+        self.details = details
+
+    def __str__(self):
+        return (f"{self.details}\n")

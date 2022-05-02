@@ -16,94 +16,44 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-DISTRIBUTIONS = {
-    'archlinux': {
+from .managers import native_managers, other_managers
+
+
+distrodata = {
+    'arch': {
         'managers': {
-            'native': {
-                'command': 'pacman',
-                'install': '-S',
-                'update': '-S',
-                'args': ['--refresh', '--noconfirm', '--noprogressbar',
-                         '--quiet'],
-            }
+            'native': native_managers['pacman'],
+            **other_managers,
         }
     },
     'alpine': {
         'managers': {
-            'native': {
-                'command': 'apk',
-                'install': 'add',
-                'update': 'update',
-                'args': ['--no-progress', '--allow-untrusted', '--quiet'],
-            }
+            'native': native_managers['apk'],
+            **other_managers,
         }
     },
     'debian': {
         'managers': {
-            'native': {
-                'env': {
-                    'DEBIAN_FRONTEND': 'noninteractive'
-                },
-                'command': 'apt-get',
-                'install': 'install',
-                'update': 'update',
-                'args': ['-qq', '-oApt::Install-Recommends=false',
-                         '-oApt::Get::Assume-Yes=true',
-                         '-oApt::Get::AllowUnauthenticated=true',
-                         '-oDPkg::Options::=--force-confmiss',
-                         '-oDPkg::Options::=--force-confnew',
-                         '-oDPkg::Options::=--force-overwrite',
-                         '-oDPkg::Options::=--force-unsafe-io'],
-            }
-        }
-    },
-    'ubuntu': {
-        'managers': {
-            'native': {
-                'env': {
-                    'DEBIAN_FRONTEND': 'noninteractive'
-                },
-                'command': 'apt-get',
-                'install': 'install',
-                'update': 'update',
-                'args': ['-qq', '-oApt::Install-Recommends=false',
-                         '-oApt::Get::Assume-Yes=true',
-                         '-oApt::Get::AllowUnauthenticated=true',
-                         '-oDPkg::Options::=--force-confmiss',
-                         '-oDPkg::Options::=--force-confnew',
-                         '-oDPkg::Options::=--force-overwrite',
-                         '-oDPkg::Options::=--force-unsafe-io'],
-            }
+            'native': native_managers['apt'],
+            **other_managers,
         }
     },
     'fedora': {
         'managers': {
-            'native': {
-                'command': 'yum',
-                'install': 'install',
-                'update': 'update',
-                'args': '--assumeyes --nogpgcheck --quiet',
-            }
+            'native': native_managers['yum'],
+            **other_managers,
         }
     },
     'centos': {
         'managers': {
-            'native': {
-                'command': 'yum',
-                'install': 'install',
-                'update': 'update',
-                'args': '--assumeyes --nogpgcheck --quiet',
-            }
+            'native': native_managers['yum'],
+            **other_managers,
         }
     },
     'gentoo': {
         'managers': {
-            'native': {
-                'command': 'yum',
-                'install': 'install',
-                'update': 'update',
-                'args': '--assumeyes --nogpgcheck --quiet',
-            }
+            'native': native_managers['portage'],
+            **other_managers,
         }
     }
 }

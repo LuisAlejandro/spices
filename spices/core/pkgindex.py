@@ -21,65 +21,151 @@ from contextlib import closing
 from urllib.request import urlopen, Request
 
 import lxml.html
+from packaging.version import Version
 
 from .logger import logger
-
-archlinux_versions = ['rolling']
-
-alpine_version_url = 'https://dl-cdn.alpinelinux.org/alpine'
-ubuntu_version_url = 'http://archive.ubuntu.com/ubuntu/dists'
-fedora_version_url = 'https://dl.fedoraproject.org/pub/archive/fedora/linux/releases'
-
-debian_release_url_holder = 'http://deb.debian.org/debian/dists/{0}/Release'
-debian_suites = ['oldoldstable', 'oldstable', 'stable', 'testing', 'unstable']
+from ..config.codenames import debian_suites, fedora_version_url, \
+    alpine_version_url, debian_release_url_holder, \
+    olddebian_version_url, base_debian_codename_index, \
+    olddebian_release_url_holder, debian_oldversioning, \
+    base_arch_codename_index, base_fedora_codename_index, \
+    base_alpine_codename_index, base_gentoo_codename_index, \
+    base_centos_codename_index
 
 
-def get_debian_versions():
+def request_first_bytes(debian_release_url):
+
+    req = Request(debian_release_url)
+    req.add_header('Range', 'bytes={0}-{1}'.format(0, 256))
+
+    try:
+        with closing(urlopen(req)) as d:
+            return str(d.read())
+    except Exception:
+        return ''
+
+
+def get_curr_debian_codename_index(suites, url_holder):
     logger.debug('Getting Debian versions')
-    debian_versions = []
+    idx = {}
 
-    for debian_suite in debian_suites:
-        debian_release_url = debian_release_url_holder.format(debian_suite)
+    for debian_suite in suites:
+        debian_release_url = url_holder.format(debian_suite)
 
-        r = Request(debian_release_url)
-        r.add_header('Range', 'bytes={0}-{1}'.format(0, 256))
+        debian_release_content = request_first_bytes(debian_release_url)
 
-        with closing(urlopen(r)) as d:
-            debian_release_content = d.read()
+        codename = re.findall(r'Codename: (\w*)', debian_release_content)
+        version = re.findall(r'Version: (\d*\.?\d*)', debian_release_content)
 
-        debian_versions.append(re.findall('Codename: (.*)',
-                                          debian_release_content)[0])
+        if debian_suite in ['testing', 'unstable']:
+            idx[debian_suite] = list(set([codename[0], debian_suite]))
+            continue
 
+        if not (codename and version):
+            continue
+
+        v = Version(version[0])
+        if codename[0] in debian_oldversioning:
+            version = f'{v.major}.{v.minor}'
+        else:
+            version = f'{v.major}'
+
+        idx[version] = list(set([codename[0], debian_suite]))
+
+    return idx
+
+
+def get_archive_debian_codename_index():
+    olddebian_version_url_html = \
+        lxml.html.parse(olddebian_version_url).getroot()
+    links = olddebian_version_url_html.cssselect('a')
+    debian_versions = [
+        e.get('href')
+        for e in links
+        if e.text_content() not in
+        ['Name', 'Last modified', 'Size', 'Parent Directory']
+    ]
+    debian_versions = [
+        e.strip('/')
+        for e in debian_versions
+        if len(e.split('-')) == 1
+    ]
     return debian_versions
-
-
-def get_ubuntu_versions():
-    logger.debug('Getting Mongo versions')
-
-    ubuntu_version_url_html = lxml.html.parse(ubuntu_version_url).getroot()
-    links = ubuntu_version_url_html.cssselect('a')
-    ubuntu_versions = [e.get('href') for e in links]
-    ubuntu_versions = [e for e in ubuntu_versions if len(e.split('-')) == 1]
-    ubuntu_versions.remove('devel')
-    return ubuntu_versions
 
 
 def get_fedora_versions():
     logger.debug('Getting Mongo versions')
-
     fedora_version_url_html = lxml.html.parse(fedora_version_url).getroot()
     links = fedora_version_url_html.cssselect('a')
-    fedora_versions = [e.get('href') for e in links]
-    fedora_versions = [e for e in fedora_versions if len(e.split('-')) == 1]
-    fedora_versions.remove('devel')
+    fedora_versions = [
+        e.get('href')
+        for e in links
+        if e.text_content() not in
+        ['Name', 'Last modified', 'Size',
+         'Description', 'Parent Directory', 'test/']
+    ]
+    fedora_versions = [
+        e.strip('/')
+        for e in fedora_versions
+        if len(e.split('-')) == 1
+    ]
     return fedora_versions
 
 
 def get_alpine_versions():
     logger.debug('Getting Mongo versions')
-
     alpine_version_url_html = lxml.html.parse(alpine_version_url).getroot()
     links = alpine_version_url_html.cssselect('a')
-    alpine_versions = [e.get('href') for e in links]
+    alpine_versions = [
+        e.get('href')
+        for e in links
+        if e.text_content() not in
+        ['latest-stable/', 'MIRRORS.txt', 'last-updated', '../']
+    ]
+    alpine_versions = [
+        e.strip('/')
+        for e in alpine_versions
+        if len(e.split('-')) == 1
+    ]
+    return alpine_versions
 
-    return [e for e in alpine_versions if e.startswith('v')] + ['edge']
+
+def debian_codename_index():
+    old_debian_suites = get_archive_debian_codename_index()
+    olddebians = get_curr_debian_codename_index(old_debian_suites,
+                                                olddebian_release_url_holder)
+    currdebians = get_curr_debian_codename_index(debian_suites,
+                                                 debian_release_url_holder)
+    return {
+        **base_debian_codename_index,
+        **olddebians,
+        **currdebians
+    }
+
+
+def fedora_codename_index():
+    fedora_versions = {f: [f] for f in get_fedora_versions()}
+    return {
+        **fedora_versions,
+        **base_fedora_codename_index
+    }
+
+
+def alpine_codename_index():
+    alpine_versions = {f: [f] for f in get_alpine_versions()}
+    return {
+        **base_alpine_codename_index,
+        **alpine_versions
+    }
+
+
+def arch_codename_index():
+    return {**base_arch_codename_index}
+
+
+def gentoo_codename_index():
+    return {**base_gentoo_codename_index}
+
+
+def centos_codename_index():
+    return {**base_centos_codename_index}

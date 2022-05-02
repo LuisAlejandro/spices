@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-``pipsalabim.cli`` is a module for handling the command line interface.
+``spices.cli`` is a module for handling the command line interface.
 
 This module handles the commands for using Spices. It also parses
 parameters, show help, version and controls the logging level.
@@ -44,21 +44,40 @@ def commandline(argv=None):
     """
     assert isinstance(argv, (list, type(None)))
 
-    parser = ArgumentParser(description=__description__)
-    parser.add_argument(
+    parser = ArgumentParser(
+        prog='spices', description=__description__, add_help=False,
+        usage='\t%(prog)s [options]\n\t%(prog)s <command> [options]')
+    gen_options = parser.add_argument_group('General Options')
+    gen_options.add_argument(
         '-V', '--version', action='version',
-        version='pipsalabim {0}'.format(__version__),
+        version='spices {0}'.format(__version__),
         help='Print version and exit.')
-    parser.add_argument(
-        '-l', '--loglevel', default='WARNING', metavar='<level>',
-        choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'],
-        help='Logger verbosity level (default: WARNING).')
+    gen_options.add_argument(
+        '-h', '--help', action='help', help='Show this help message and exit.')
+    subparsers = parser.add_subparsers(title='Commands', metavar='')
 
-    subparsers = parser.add_subparsers(title='commands')
-    install_parser = subparsers.add_parser('install')
+    install_parser = subparsers.add_parser(
+        'install', prog='spices', usage='%(prog)s install [options]',
+        help='Install dependencies defined in .spices.yml', add_help=False)
     install_parser.set_defaults(command=install)
+    install_gen_options = install_parser.add_argument_group('General Options')
+    install_gen_options.add_argument(
+        '-V', '--version', action='version',
+        version='spices {0}'.format(__version__),
+        help='Print version and exit.')
+    install_gen_options.add_argument(
+        '-h', '--help', action='help', help='Show this help message and exit.')
+    install_options = install_parser.add_argument_group('Install Options')
+    install_options.add_argument(
+        '-c', '--conffile', metavar='<path>',
+        help='A path pointing to a .spice.yml file.')
+    install_options.add_argument(
+        '-l', '--loglevel', default='INFO', metavar='<level>',
+        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+        help=('Logger verbosity level (default: INFO). Must be one of: '
+              'DEBUG, INFO, WARNING, ERROR or CRITICAL.'))
 
-    return parser.parse_args(argv)
+    return parser, parser.parse_args(argv)
 
 
 def main(argv=None):
@@ -76,11 +95,15 @@ def main(argv=None):
     """
     assert isinstance(argv, (list, type(None)))
 
-    args = commandline(argv)
+    parser, args = commandline(argv)
+
+    if not hasattr(args, 'command'):
+        parser.print_help()
+        return 0
 
     logger.start()
     logger.loglevel(args.loglevel)
-    logger.info('Starting execution.')
+    logger.debug('Starting execution.')
 
     try:
         status = args.command(**vars(args))
@@ -92,7 +115,7 @@ def main(argv=None):
         logger.critical('Shutting down due to fatal error!')
         status = 1
     else:
-        logger.info('Ending execution.')
+        logger.debug('Ending execution.')
 
     logger.stop()
     return status

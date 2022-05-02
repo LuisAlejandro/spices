@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-``pipsalabim`` is just black magic.
+``spices`` is just black magic.
 
 Spices is a package that studies the codebase of your project in search
 for internal and external imports. It then discards the imports that are
@@ -32,5 +32,5 @@ __author__ = 'Luis Alejandro Martínez Faneyth'
 __email__ = 'luis@collagelabs.org'
 __version__ = '0.0.3'
 __url__ = 'https://github.com/LuisAlejandro/spices'
-__description__ = ('A universal dependency resolver:'
+__description__ = ('A universal dependency resolver: '
                    'one installer to rule them all.')

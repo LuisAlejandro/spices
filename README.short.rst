@@ -42,14 +42,14 @@
 |
 
 .. _different repository: https://github.com/LuisAlejandro/spices-build
-.. _pipsalabim: https://github.com/LuisAlejandro/pipsalabim
+.. _spices: https://github.com/LuisAlejandro/spices
 .. _full documentation: https://spices.readthedocs.org
 .. _Contents: https://www.debian.org/distrib/packages#search_contents
 
 Current version: 0.0.1
 
 Spices generates a configurable index written in ``JSON`` format that
-serves as a database for applications like `pipsalabim`_. It can be configured
+serves as a database for applications like `spices`_. It can be configured
 to process only a range of packages (by initial letter) and to have
 memory, time or log size limits. It basically aims to mimic what the
 `Contents`_ file means for a Debian based package repository, but for the
