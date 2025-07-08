@@ -20,9 +20,9 @@ import os
 
 import yamale
 
-from ..core.logger import logger
-from ..core.errors import SpicesNotFound, SchemaNotFound, ValidationError
+from ..core.errors import SchemaNotFound, SpicesNotFound, ValidationError
 from ..core.installer import Installer
+from ..core.logger import logger
 
 
 def validate(spicespath, schemapath):
@@ -65,4 +65,4 @@ def main(**kwargs):
     spices = validate(spicespath, schemapath)
 
     installer = Installer(spices)
-    # installer.execute()
+    installer.execute()

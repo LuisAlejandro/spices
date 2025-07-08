@@ -1,0 +1,160 @@
+name: Docker Tests
+
+on:
+    push:
+        branches:
+            - master
+            - develop
+    pull_request:
+        branches:
+            - master
+            - develop
+
+jobs:
+    discover-images:
+        name: Discover Docker Images
+        runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Discover Docker images
+              id: set-matrix
+              run: |
+                  # Find all Dockerfiles and extract distribution and version info
+                  images_json="["
+                  first=true
+
+                  for dockerfile in $(find tests/docker -name "Dockerfile" | sort); do
+                    # Extract path components: tests/docker/distro/version/Dockerfile
+                    path_parts=($(echo "$dockerfile" | tr '/' ' '))
+                    distro="${path_parts[2]}"
+                    version="${path_parts[3]}"
+
+                    if [ "$first" = true ]; then
+                      first=false
+                    else
+                      images_json+=","
+                    fi
+
+                    images_json+="{\"distro\":\"$distro\",\"version\":\"$version\",\"dockerfile\":\"$dockerfile\"}"
+                  done
+
+                  images_json+="]"
+                  echo "matrix={\"include\":$images_json}" >> $GITHUB_OUTPUT
+                  echo "Found images: $images_json"
+
+    test-docker-images:
+        name: Test spices install on ${{ matrix.distro }}:${{ matrix.version }}
+        runs-on: ubuntu-latest
+        needs: discover-images
+        strategy:
+            fail-fast: false
+            matrix: ${{ fromJson(needs.discover-images.outputs.matrix) }}
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.11"
+
+            - name: Install dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libxml2-dev libxslt-dev
+                  pip install -r requirements.txt -r requirements-dev.txt
+                  pip install -e .
+
+            - name: Build Docker image
+              run: |
+                  docker build -t spices-test-${{ matrix.distro }}-${{ matrix.version }} \
+                    -f ${{ matrix.dockerfile }} \
+                    $(dirname ${{ matrix.dockerfile }})
+
+            - name: Create test .spices.yml file
+              run: |
+                  mkdir -p test-workspace
+                  cat > test-workspace/.spices.yml << 'EOF'
+                  version: 1
+                  managers:
+                    debian:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    alpine:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    arch:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    centos:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    fedora:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    gentoo:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    npm:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    yarn:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    bundler:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    pip:
+                      dependencies:
+                        - procps
+                      postinstall: |
+                        echo "Installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                    custom: |
+                      echo "Custom installation completed on ${{ matrix.distro }}:${{ matrix.version }}"
+                  EOF
+
+            - name: Test spices install in Docker container
+              run: |
+                  # Run the container with spices installed and test the install command
+                  docker run --rm \
+                    -v ${PWD}:/workspace \
+                    -v ${PWD}/test-workspace:/test-workspace \
+                    -w /test-workspace \
+                    spices-test-${{ matrix.distro }}-${{ matrix.version }} \
+                    bash -c "
+                      # Install spices from the mounted workspace
+                      cd /workspace && python3 -m pip install -e . && \
+
+                      # Go back to test workspace and run spices install
+                      cd /test-workspace && \
+                      echo 'Testing spices install on ${{ matrix.distro }}:${{ matrix.version }}' && \
+                      spices install --verbose
+                    "
+
+            - name: Cleanup
+              if: always()
+              run: |
+                  rm -rf test-workspace
+                  docker rmi spices-test-${{ matrix.distro }}-${{ matrix.version }} || true

@@ -39,3 +39,4 @@ RUN bash -c "source /opt/rh/rh-python36/enable \
 
 USER spices
 CMD ["depends/test.sh"]
+

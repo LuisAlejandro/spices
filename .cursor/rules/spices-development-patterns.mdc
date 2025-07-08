@@ -1,0 +1,169 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Spices Development Patterns and Best Practices
+
+## Code Organization Patterns
+
+### Package Manager Implementation Pattern
+When adding new package managers to [spices/core/managers.py](mdc:spices/core/managers.py):
+
+1. **Inherit from PackageManager base class**
+2. **Override required methods**:
+   - `__init__(dependencies, distro)` - Initialize with native manager config
+   - `_parse_dependencies()` - Parse distribution-specific dependency formats
+   - `add_trusted_keys()` - Implement GPG key management if applicable
+   - `add_manager_sources()` - Implement repository management if applicable
+
+3. **Follow the Apt class pattern** for complex managers:
+   - Two-layer GPG key management (explicit + inferred)
+   - Repository URL extraction and validation
+   - Error handling with graceful fallbacks
+
+### Distribution Detection Pattern
+In [spices/core/installer.py](mdc:spices/core/installer.py), follow the established detection hierarchy:
+
+1. **LSB release command** (`try_lsb_release_command()`)
+2. **Distribution-specific files** (`try_*_release_file()` methods)
+3. **Generic OS release files** (`try_os_release_file()`, `try_lsb_release_file()`)
+4. **Package manager detection** (`try_apt()`)
+
+Always set `self.distname`, `self.codename`, and `self.version` in detection methods.
+
+### Error Handling Pattern
+Use custom exceptions from [spices/core/errors.py](mdc:spices/core/errors.py):
+
+- **SpicesError** - Base exception for all Spices-related errors
+- **SpicesNotFound** - When `.spices.yml` file is missing
+- **SchemaNotFound** - When schema validation file is missing
+- **CannotIdentifyDistribution** - When distribution detection fails
+- **UnsupportedDistribution** - When distribution is not supported
+- **ThereAreNoCommands** - When no valid commands are generated
+
+### Configuration Processing Pattern
+Follow the workflow in [spices/core/spices.py](mdc:spices/core/spices.py):
+
+1. **Validate content** - Check for empty configurations
+2. **Merge data incrementally** - Handle list-based configurations
+3. **Generate command list** - Create manager instances for each valid manager
+4. **Filter by allowed managers** - Use the established manager mappings
+
+## Testing Patterns
+
+### Unit Test Structure
+Follow the plan in [UNIT_TESTING_PLAN.md](mdc:UNIT_TESTING_PLAN.md):
+
+- **Arrange-Act-Assert pattern** for all tests
+- **Mock external dependencies** (file system, network, subprocess)
+- **Test error conditions** alongside happy paths
+- **Use descriptive test names** that explain the scenario
+
+### Docker Test Pattern
+For Docker tests following [LOCAL_DOCKER_TESTING_PLAN.md](mdc:LOCAL_DOCKER_TESTING_PLAN.md):
+
+- **Dockerfile naming**: `tests/docker/{distro}/{version}/Dockerfile`
+- **Image naming**: `spices-test-{distro}-{version}`
+- **Test workspace**: Mount source code and create test `.spices.yml`
+- **Validation**: Check installation success and command execution
+
+### Mock Strategy
+Based on [UNIT_TESTING_PLAN.md](mdc:UNIT_TESTING_PLAN.md):
+
+- **File operations**: Mock `os.path.exists`, `open`, `os.listdir`
+- **Subprocess**: Mock `subprocess.Popen` and `subprocess.PIPE`
+- **Network**: Mock `urllib.request.urlopen`
+- **External commands**: Mock `distutils.spawn.find_executable`
+
+## Configuration Patterns
+
+### Schema Validation
+Use [spices/config/schema.yml](mdc:spices/config/schema.yml) patterns:
+
+- **Version field**: Always include `version: 1`
+- **Manager sections**: Group by distribution or package manager type
+- **Dependencies**: List of package names
+- **Repositories**: List of repository URLs (optional)
+- **GPG keys**: List of GPG key URLs (optional)
+- **Postinstall scripts**: Multi-line shell scripts (optional)
+
+### Distribution Configuration
+Follow [spices/config/distributions.py](mdc:spices/config/distributions.py) patterns:
+
+- **Native managers**: Map to distribution's primary package manager
+- **Other managers**: Include npm, yarn, pip, bundler for all distributions
+- **Consistent structure**: Each distribution should have identical manager structure
+
+### Manager Configuration
+In [spices/config/managers.py](mdc:spices/config/managers.py):
+
+- **Command**: Primary executable name
+- **Install/Update**: Subcommands for installation and updates
+- **Args**: List of command-line arguments
+- **Environment**: Dictionary of environment variables
+
+## Logging Patterns
+
+### Logger Usage
+Use the global logger from [spices/core/logger.py](mdc:spices/core/logger.py):
+
+```python
+from spices.core.logger import logger
+
+# Info level for normal operations
+logger.info('Installing missing dependencies ...')
+
+# Warning level for recoverable issues
+logger.warning('Could not read sources.list file')
+
+# Error level for failures
+logger.error(f'Failed to add GPG key: {error}')
+
+# Debug level for detailed information
+logger.debug(f'Trying GPG key URL: {key_url}')
+```
+
+### Log Message Format
+- **Use descriptive messages** that explain what's happening
+- **Include context** like file paths, URLs, or distribution names
+- **Use f-strings** for variable interpolation
+- **Keep messages concise** but informative
+
+## Documentation Patterns
+
+### Docstring Format
+Follow Google-style docstrings as outlined in [DOCUMENTATION_PLAN.md](mdc:DOCUMENTATION_PLAN.md):
+
+```python
+def add_trusted_keys(self):
+    """Add GPG keys for APT repositories using a two-layer approach.
+    
+    Layer 1: Add keys specified in the spices yml file
+    Layer 2: Infer and add missing keys from sources.list and sources.list.d/
+    
+    Raises:
+        Exception: If GPG key addition fails
+    """
+```
+
+### Code Comments
+- **Explain why, not what** - Focus on business logic and decisions
+- **Document complex algorithms** - Especially in distribution detection
+- **Mark TODO items** clearly for future improvements
+- **Reference external documentation** when applicable
+
+## File Organization
+
+### Import Order
+1. **Standard library imports**
+2. **Third-party imports** 
+3. **Local imports** (relative imports within spices)
+
+### Module Structure
+- **Constants and configuration** at the top
+- **Exception classes** before other classes
+- **Base classes** before derived classes
+- **Helper functions** at the end
+
+This pattern guide ensures consistency across the Spices codebase and helps maintain the established architecture while adding new features.
