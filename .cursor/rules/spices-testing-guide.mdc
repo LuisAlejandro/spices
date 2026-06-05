@@ -1,0 +1,250 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Spices Testing Guide
+
+## Testing Strategy Overview
+
+The Spices project follows a comprehensive testing approach outlined in [UNIT_TESTING_PLAN.md](mdc:UNIT_TESTING_PLAN.md) and [LOCAL_DOCKER_TESTING_PLAN.md](mdc:LOCAL_DOCKER_TESTING_PLAN.md).
+
+## Current Test Structure
+
+### Existing Tests
+- [tests/test_core_logger.py](mdc:tests/test_core_logger.py) - Logger functionality tests
+- [tests/test_core_utils.py](mdc:tests/test_core_utils.py) - Utility function tests
+
+### Test Infrastructure
+- **Framework**: Python `unittest` module
+- **Coverage**: `coverage` package with `coveralls` integration
+- **Mocking**: `unittest.mock` for dependency isolation
+- **Docker Testing**: GitHub Actions workflow in [.github/workflows/docker-tests.yml](mdc:.github/workflows/docker-tests.yml)
+
+## Unit Testing Guidelines
+
+### Test Organization
+Follow the structure in [UNIT_TESTING_PLAN.md](mdc:UNIT_TESTING_PLAN.md):
+
+```
+tests/
+├── unit/
+│   ├── test_cli.py              # CLI module tests
+│   ├── api/test_install.py      # API module tests
+│   ├── core/                    # Core module tests
+│   └── config/                  # Config module tests
+├── integration/                 # Integration tests
+├── fixtures/                    # Test data and fixtures
+└── helpers/                     # Test utilities
+```
+
+### Coverage Targets
+- **Overall Target**: ≥80% line coverage
+- **Critical Modules**: ≥85% coverage
+  - [spices/core/installer.py](mdc:spices/core/installer.py)
+  - [spices/core/managers.py](mdc:spices/core/managers.py)
+  - [spices/core/spices.py](mdc:spices/core/spices.py)
+- **Error Handling**: 100% coverage
+  - [spices/core/errors.py](mdc:spices/core/errors.py)
+
+### Mocking Strategy
+
+#### System Dependencies
+Mock these external dependencies in tests:
+- **File System**: `os.path.exists`, `os.path.isfile`, `open`, `os.listdir`
+- **Subprocess**: `subprocess.Popen`, `subprocess.PIPE`
+- **Network**: `urllib.request.urlopen`
+- **Commands**: `distutils.spawn.find_executable`
+
+#### Example Mock Pattern
+```python
+from unittest.mock import patch, mock_open
+
+class TestInstaller(unittest.TestCase):
+    @patch('os.path.exists')
+    @patch('builtins.open', new_callable=mock_open, read_data='Ubuntu 20.04')
+    def test_try_os_release_file(self, mock_file, mock_exists):
+        mock_exists.return_value = True
+        installer = Installer(mock_spices)
+        installer.try_os_release_file()
+        self.assertEqual(installer.distname, 'ubuntu')
+```
+
+### Test Case Patterns
+
+#### Package Manager Tests
+For [spices/core/managers.py](mdc:spices/core/managers.py):
+
+```python
+class TestApt(unittest.TestCase):
+    def setUp(self):
+        self.dependencies = ['curl', 'wget']
+        self.apt_manager = Apt(self.dependencies, 'debian')
+    
+    def test_two_layer_gpg_key_management(self):
+        """Test the two-layer GPG key addition approach"""
+        # Test both spices.yml keys and inferred keys
+    
+    def test_repository_url_extraction(self):
+        """Test extraction of URLs from sources.list files"""
+        # Mock file reading and URL parsing
+```
+
+#### Distribution Detection Tests
+For [spices/core/installer.py](mdc:spices/core/installer.py):
+
+```python
+class TestInstaller(unittest.TestCase):
+    def test_distribution_detection_hierarchy(self):
+        """Test the fallback hierarchy for distribution detection"""
+        # Test LSB -> specific files -> generic files -> package manager
+    
+    def test_unsupported_distribution_error(self):
+        """Test handling of unsupported distributions"""
+        # Should raise UnsupportedDistribution exception
+```
+
+## Docker Testing Guidelines
+
+### Test Configuration Structure
+Based on [LOCAL_DOCKER_TESTING_PLAN.md](mdc:LOCAL_DOCKER_TESTING_PLAN.md):
+
+#### Dockerfile Organization
+- **Path**: `tests/docker/{distro}/{version}/Dockerfile`
+- **Naming**: Follow existing pattern in [tests/docker/](mdc:tests/docker/)
+- **Base Images**: Use official distribution images
+
+#### Test Scenarios
+1. **Basic Installation**: Install spices and verify command availability
+2. **Package Installation**: Test actual package installation functionality
+3. **Configuration Validation**: Test `.spices.yml` parsing and validation
+4. **Error Handling**: Test graceful handling of error conditions
+
+### Local Docker Testing
+Use the planned scripts from [LOCAL_DOCKER_TESTING_PLAN.md](mdc:LOCAL_DOCKER_TESTING_PLAN.md):
+
+```bash
+# Test all distributions
+./scripts/docker-tests/local-docker-test.sh
+
+# Test specific distribution
+./scripts/docker-tests/local-docker-test.sh --distro debian
+
+# Parallel testing with reporting
+./scripts/docker-tests/local-docker-test.sh --parallel 4 --report
+```
+
+## Integration Testing
+
+### End-to-End Workflow Tests
+Test the complete workflow from [spices/api/install.py](mdc:spices/api/install.py):
+
+1. **Configuration Loading**: Load and validate `.spices.yml`
+2. **Distribution Detection**: Detect current distribution
+3. **Package Manager Selection**: Choose appropriate package manager
+4. **Installation Execution**: Execute package installation
+5. **Result Validation**: Verify successful installation
+
+### Cross-Distribution Testing
+Test compatibility across different distributions:
+- **Debian Family**: debian, ubuntu, raspbian
+- **Red Hat Family**: centos, fedora, oracle, redhat
+- **Alpine Family**: alpine, busybox
+- **Others**: arch, gentoo, opensuse
+
+## Test Data and Fixtures
+
+### Mock Configuration Files
+Create test fixtures for [spices/config/schema.yml](mdc:spices/config/schema.yml) validation:
+
+```python
+# tests/fixtures/sample_configs.py
+def create_basic_config():
+    return {
+        'version': 1,
+        'managers': {
+            'debian': {'dependencies': ['curl', 'wget']}
+        }
+    }
+
+def create_advanced_config():
+    return {
+        'version': 1,
+        'managers': {
+            'debian': {
+                'dependencies': ['curl'],
+                'repositories': ['https://example.com/repo'],
+                'gpg_keys': ['https://example.com/key.gpg']
+            }
+        }
+    }
+```
+
+### Mock System Files
+Create mock system files for distribution detection:
+
+```python
+# tests/fixtures/mock_system_files.py
+def mock_os_release_ubuntu():
+    return """ID=ubuntu
+VERSION_ID="20.04"
+VERSION_CODENAME=focal"""
+
+def mock_sources_list():
+    return """deb http://archive.ubuntu.com/ubuntu focal main
+deb-src http://archive.ubuntu.com/ubuntu focal main"""
+```
+
+## Performance Testing
+
+### Benchmarking
+Track performance metrics for:
+- **Distribution Detection Time**: Should be < 1 second
+- **Package Installation Time**: Varies by distribution and packages
+- **Configuration Parsing Time**: Should be < 100ms
+- **Test Execution Time**: Unit tests < 1 second each
+
+### Resource Usage
+Monitor resource consumption during:
+- **Memory Usage**: Track memory leaks in long-running tests
+- **File Descriptors**: Ensure proper cleanup of file handles
+- **Network Connections**: Monitor network usage in Docker tests
+
+## Continuous Integration
+
+### GitHub Actions Integration
+The workflow in [.github/workflows/docker-tests.yml](mdc:.github/workflows/docker-tests.yml):
+- **Matrix Testing**: Tests 27 distribution configurations
+- **Parallel Execution**: Runs multiple tests simultaneously
+- **Artifact Collection**: Saves test results and logs
+
+### Local CI Simulation
+Use the planned local scripts to replicate CI behavior:
+- **Pre-commit Testing**: Run tests before committing changes
+- **Branch Testing**: Test feature branches locally
+- **Performance Regression**: Detect performance issues early
+
+## Test Maintenance
+
+### Regular Updates
+- **Update Docker Images**: Keep base images current
+- **Review Test Coverage**: Ensure new code is properly tested
+- **Clean Test Data**: Remove obsolete test fixtures
+- **Update Dependencies**: Keep testing dependencies current
+
+### Adding New Tests
+When adding new functionality:
+
+1. **Write Tests First**: Follow TDD when possible
+2. **Mock External Dependencies**: Isolate units under test
+3. **Test Error Conditions**: Don't just test happy paths
+4. **Update Coverage Targets**: Maintain minimum coverage levels
+5. **Document Test Purpose**: Clear test names and docstrings
+
+### Debugging Test Failures
+- **Use Verbose Output**: Run tests with `-v` flag for detailed output
+- **Isolate Failures**: Run individual test methods to isolate issues
+- **Check Mock Setup**: Verify mocks are configured correctly
+- **Review Logs**: Check application logs for error details
+
+This testing guide ensures comprehensive coverage while maintaining test quality and reliability across the Spices codebase.

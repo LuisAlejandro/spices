@@ -1,0 +1,73 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Spices Project Architecture Guide
+
+## Overview
+Spices is a universal dependency resolver and package manager that works across different Linux distributions. It reads configuration from `.spices.yml` files and installs dependencies using the appropriate package manager for each distribution.
+
+## Core Architecture
+
+### Main Entry Points
+- CLI entry point: [spices/cli.py](mdc:spices/cli.py) - Command-line interface and argument parsing
+- API entry point: [spices/api/install.py](mdc:spices/api/install.py) - Main installation API
+- Package initialization: [spices/__init__.py](mdc:spices/__init__.py) - Package metadata and version info
+
+### Core Modules
+- **Installer**: [spices/core/installer.py](mdc:spices/core/installer.py) - Main installer orchestration and distribution detection
+- **Package Managers**: [spices/core/managers.py](mdc:spices/core/managers.py) - Package manager implementations (Apt, Yum, etc.)
+- **Distribution Handling**: [spices/core/distro.py](mdc:spices/core/distro.py) - Distribution detection and management
+- **Core Logic**: [spices/core/spices.py](mdc:spices/core/spices.py) - Core Spices class and configuration processing
+- **Error Handling**: [spices/core/errors.py](mdc:spices/core/errors.py) - Custom exception classes
+- **Utilities**: [spices/core/utils.py](mdc:spices/core/utils.py) - Utility functions and validation
+- **Logging**: [spices/core/logger.py](mdc:spices/core/logger.py) - Logging configuration
+- **Package Index**: [spices/core/pkgindex.py](mdc:spices/core/pkgindex.py) - Package index management
+
+### Configuration
+- **Schema**: [spices/config/schema.yml](mdc:spices/config/schema.yml) - Configuration validation schema
+- **Distributions**: [spices/config/distributions.py](mdc:spices/config/distributions.py) - Distribution configuration data
+- **Managers**: [spices/config/managers.py](mdc:spices/config/managers.py) - Package manager configurations
+- **Codenames**: [spices/config/codenames.py](mdc:spices/config/codenames.py) - Distribution codename mappings
+
+## Key Patterns
+
+### Package Manager Implementation
+All package managers inherit from `PackageManager` base class in [spices/core/managers.py](mdc:spices/core/managers.py):
+- `Apt` class implements Debian/Ubuntu package management with two-layer GPG key management
+- Each manager implements: `get_execute_command()`, `update()`, `install()`, `add_trusted_keys()`, `add_manager_sources()`
+
+### Distribution Detection
+The [spices/core/installer.py](mdc:spices/core/installer.py) uses multiple detection methods:
+- LSB release command
+- OS release files (`/etc/os-release`, `/etc/lsb-release`)
+- Distribution-specific files (`/etc/debian_version`, `/etc/fedora-release`, etc.)
+- APT policy information
+
+### Configuration Processing
+Configuration flows through:
+1. [spices/api/install.py](mdc:spices/api/install.py) - Validates config and schema files
+2. [spices/core/spices.py](mdc:spices/core/spices.py) - Processes configuration and generates command list
+3. [spices/core/distro.py](mdc:spices/core/distro.py) - Coordinates package manager execution
+
+## Testing Structure
+
+### Current Tests
+- [tests/test_core_logger.py](mdc:tests/test_core_logger.py) - Logger tests
+- [tests/test_core_utils.py](mdc:tests/test_core_utils.py) - Utility function tests
+
+### Docker Tests
+- [.github/workflows/docker-tests.yml](mdc:.github/workflows/docker-tests.yml) - GitHub Actions workflow
+- [tests/docker/](mdc:tests/docker/) - Docker test configurations for 27 distributions
+
+### Test Plans
+- [UNIT_TESTING_PLAN.md](mdc:UNIT_TESTING_PLAN.md) - Comprehensive unit testing strategy
+- [LOCAL_DOCKER_TESTING_PLAN.md](mdc:LOCAL_DOCKER_TESTING_PLAN.md) - Local Docker testing scripts plan
+
+## Documentation Plans
+- [DOCUMENTATION_PLAN.md](mdc:DOCUMENTATION_PLAN.md) - Complete documentation strategy for all modules
+
+## Configuration Examples
+- [example_with_repos.yml](mdc:example_with_repos.yml) - Example configuration with repositories and GPG keys
+- [tests/cases/](mdc:tests/cases/) - Test case configurations for different distributions
