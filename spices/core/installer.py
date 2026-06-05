@@ -18,21 +18,26 @@
 
 import os
 import re
-from subprocess import Popen, PIPE
 from distutils.spawn import find_executable
+from subprocess import PIPE, Popen
 
 from dotenv import dotenv_values
 from packaging.version import Version
+from slugify import slugify
 
-from .distro import Distribution
-from .errors import (CannotIdentifyDistribution,
-                     UnsupportedDistribution)
-from .utils import flatten_list
-from .logger import logger
-from .pkgindex import debian_codename_index, arch_codename_index, \
-    fedora_codename_index, alpine_codename_index, gentoo_codename_index, \
-    centos_codename_index
 from ..config.distributions import distrodata
+from .distro import Distribution
+from .errors import CannotIdentifyDistribution, UnsupportedDistribution
+from .logger import logger
+from .pkgindex import (
+    alpine_codename_index,
+    arch_codename_index,
+    centos_codename_index,
+    debian_codename_index,
+    fedora_codename_index,
+    gentoo_codename_index,
+)
+from .utils import flatten_list
 
 
 class Installer(object):
@@ -44,9 +49,7 @@ class Installer(object):
         self.version = ''
         self.metadistname = ''
         self.metacodename = ''
-        # self.release_data = {}
-        # self.dpkg_origins_data = {}
-        # self.apt_policy_data = []
+        self.apt_policy_data = []
         self.lsb_release_command = find_executable('lsb_release')
         self.os_release = '/etc/os-release'
         self.lsb_release = '/etc/lsb-release'
@@ -74,23 +77,17 @@ class Installer(object):
         self.revcodenames = {}
 
         self.populate_codename_index()
-        # self.get_distro_data()
-        # self.normalize_distro_data()
+        self.get_distro_data()
+        self.normalize_distro_data()
 
     def populate_codename_index(self):
         logger.info('Generating distributions database')
-        self.distributions['debian']['codenames'] = \
-            debian_codename_index()
-        self.distributions['arch']['codenames'] = \
-            arch_codename_index()
-        self.distributions['fedora']['codenames'] = \
-            fedora_codename_index()
-        self.distributions['alpine']['codenames'] = \
-            alpine_codename_index()
-        self.distributions['centos']['codenames'] = \
-            centos_codename_index()
-        self.distributions['gentoo']['codenames'] = \
-            gentoo_codename_index()
+        self.distributions['debian']['codenames'] = debian_codename_index()
+        self.distributions['arch']['codenames'] = arch_codename_index()
+        self.distributions['fedora']['codenames'] = fedora_codename_index()
+        self.distributions['alpine']['codenames'] = alpine_codename_index()
+        self.distributions['centos']['codenames'] = centos_codename_index()
+        self.distributions['gentoo']['codenames'] = gentoo_codename_index()
 
     def codename_index(self, x):
 
@@ -188,6 +185,8 @@ class Installer(object):
                 [self.lsb_release_command, '-is'], self.env)
             self.codename = self.cmd_return_first_line(
                 [self.lsb_release_command, '-cs'], self.env)
+            self.version = self.cmd_return_first_line(
+                [self.lsb_release_command, '-rs'], self.env)
 
     def try_arch_release_file(self):
         if (not self.distname) and os.path.exists(self.arch_release):
@@ -208,6 +207,20 @@ class Installer(object):
             version = Version(relarray[2])
             self.distname = relarray[0]
             self.version = f'{version.major}'
+            codename = re.match(r'^.*\((.*)\)$', relstr)
+            if codename:
+                self.codename = codename.groups()[0]
+
+    def try_alpine_release_file(self):
+        if (not self.distname) and os.path.exists(self.alpine_release):
+            relstr = self.cat_file(self.alpine_release)
+            relarray = relstr.split()
+            version = Version(relarray[2])
+            self.distname = relarray[0]
+            self.version = f'{version.major}'
+            codename = re.match(r'^.*\((.*)\)$', relstr)
+            if codename:
+                self.codename = codename.groups()[0]
 
     def try_centos_release_file(self):
         if (not self.distname) and os.path.exists(self.centos_release):
@@ -289,11 +302,10 @@ class Installer(object):
             self.version = '.'.join(list(filter(None, [major, minor, patch,
                                                        pre, prenum])))
         vermatch = regex.match(self.version)
-        # if self.distname == 'ubuntu':
-        #     self.codename = self.codenames['.'.join(vermatch.group(1, 2))][0]
-
-        # else:
-        self.codename = self.codenames[str(float(vermatch.group(1)))][0]
+        if vermatch:
+            self.codename = self.codenames[str(float(vermatch.group(1)))][0]
+        else:
+            self.codename = self.codenames[str(self.version)][0]
 
         if self.is_supported_codename():
             logger.info('You are using %s (%s).' % (self.distname, self.codename))
@@ -313,14 +325,22 @@ class Installer(object):
     def is_supported_codename(self):
         if self.is_supported_distname():
             if (self.codename in
-               self.distributions[self.distname][self.version]):
+               self.distributions[self.distname]['codenames'][self.version]):
                 return True
         return False
 
     def execute(self):
         logger.info('Installing missing dependencies ...')
+        self.add_trusted_keys()
+        self.add_manager_sources()
         self.update_package_db()
         self.install()
+
+    def add_trusted_keys(self):
+        self.distribution.add_trusted_keys()
+
+    def add_manager_sources(self):
+        self.distribution.add_manager_sources()
 
     def update_package_db(self):
         self.distribution.update_package_db()

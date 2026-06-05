@@ -13,7 +13,7 @@ jobs:
     if: github.repository == 'LuisAlejandro/spices'
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11.0-alpha.5"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         distro:
           - alpine
           - arch
@@ -32,7 +32,7 @@ jobs:
             toxenv: "py39"
           - python-version: "3.10"
             toxenv: "py310"
-          - python-version: "3.11.0-alpha.5"
+          - python-version: "3.11"
             toxenv: "py311"
     steps:
       - name: Checkout repo
