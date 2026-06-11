@@ -62,3 +62,35 @@ target/
 .vscode/
 
 virtualenv/
+
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+.cursor/
+
+# Keys and certs
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Node (e.g. under .cursor/skills)
+node_modules/
+
+# Rosey Agentic Environment
+rosey/brainstorms/
+rosey/plans/
+rosey/designs/
+rosey/solutions/
+rosey/insights/
+rosey/design-system/
+rosey/qa/
+rosey/deepening/
+rosey/agentic-env.json
+AGENTS.md
+DESIGN.md
