@@ -2,34 +2,33 @@
 Internal API
 ============
 
-spices package
+This section documents the internal API of the Agoras package, organized by subpackages and modules.
+
+agoras package
 --------------
 
-.. automodule:: spices
+.. automodule:: agoras
     :members:
     :private-members:
     :special-members:
 
-spices.api submodule
---------------------
+agoras.cli module
+-----------------
 
-.. automodule:: spices.api
+.. automodule:: agoras.cli
     :members:
     :private-members:
     :special-members:
 
-spices.config submodule
------------------------
+Subpackages
+-----------
 
-.. automodule:: spices.config
-    :members:
-    :private-members:
-    :special-members:
+.. toctree::
+   :maxdepth: 2
 
-spices.core submodule
----------------------
-
-.. automodule:: spices.core
-    :members:
-    :private-members:
-    :special-members:
+   api/commands
+   api/core
+   api/core_api
+   api/core_feed
+   api/core_media
+   api/core_sheet

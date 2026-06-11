@@ -22,9 +22,10 @@ All modules use the same global logging object. No messages will be emitted
 until the logger is started.
 """
 
+import logging
 import sys
 import types
-import logging
+from typing import cast
 
 levelNames = {
     'CRITICAL': 50,
@@ -151,4 +152,4 @@ class ControlableLogger(logging.Logger):
 
 
 logging.setLoggerClass(ControlableLogger)
-logger = logging.getLogger(__name__.split('.')[0])
+logger = cast(ControlableLogger, logging.getLogger(__name__.split('.')[0]))

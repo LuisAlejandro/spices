@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .errors import UnsupportedDistribution
 from .spices import Spices
-from .logger import logger
 
 
 class Distribution(object):
@@ -37,11 +35,27 @@ class Distribution(object):
         self.allowed_managers = []
         self.spices = Spices(data)
         self.metadistro = self.get_metadistro()
+        import pprint
+        pprint.pprint(self.spices.commandlist)
 
     def get_metadistro(self):
-        if self.distname not in self.derivatives:
-            raise UnsupportedDistribution()
-        return self.metadistro[self.distname]
+        if self.distname in self.derivatives:
+            return self.derivatives[self.distname]
+        return self.distname
+
+    def add_manager_sources(self):
+        for cmd in self.spices.commandlist:
+            enabled_distros = cmd.get_enabled_distros()
+            if self.distname in enabled_distros or \
+               self.metadistro in enabled_distros:
+                cmd.add_manager_sources()
+
+    def add_trusted_keys(self):
+        for cmd in self.spices.commandlist:
+            enabled_distros = cmd.get_enabled_distros()
+            if self.distname in enabled_distros or \
+               self.metadistro in enabled_distros:
+                cmd.add_trusted_keys()
 
     def update_package_db(self):
         for cmd in self.spices.commandlist:

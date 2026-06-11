@@ -1,9 +1,9 @@
-version: "3"
 services:
-  spices:
-    image: luisalejandro/spices:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/home/luisalejandro/app
+    app:
+        image: luisalejandro/spices:latest
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/home/spices/app
+            - ~/Library/Caches/pip:/home/spices/.cache/pip

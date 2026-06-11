@@ -46,7 +46,7 @@
 .. _full documentation: https://spices.readthedocs.org
 .. _Contents: https://www.debian.org/distrib/packages#search_contents
 
-Current version: 0.0.1
+Current version: 0.0.3
 
 Spices generates a configurable index written in ``JSON`` format that
 serves as a database for applications like `spices`_. It can be configured
