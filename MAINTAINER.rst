@@ -8,96 +8,89 @@ reading.
 Making a new release
 --------------------
 
-1. Start your project with a cookiecutter template.
-2. Start your git flow workflow::
-
-    git flow init
-
-3. Create a new milestone in GitHub. Plan the features of your new release. Assign
+1. Create a new milestone in GitHub. Plan the features of your new release. Assign
 existing bugs to your new milestone.
-4. Start a new feature::
+
+2. Start a new feature.
+::
 
     git flow feature start <feature name>
 
-5. Code, code and code. More coding. Mess it up several times. Push to feature
+3. Code, code and code. More coding. Mess it up several times. Push to feature
 branch. Watch Travis go red. Write unit tests. Watch Travis go red again. Don't
 leave uncommitted changes.
-6. Finish your feature::
+
+4. Finish your feature.
+::
 
     git flow feature finish <feature name>
 
-7. Repeat 4-6 for every other feature you have planned for this release.
-8. When you're done with the features and ready to publish, start a new release::
+5. Repeat 2-4 for every other feature you have planned for this release.
 
-    git flow release start <release number>
+6. When you're done with the features and ready to publish, ensure your working
+directory is clean and you're on the develop branch.
 
-9. Bump your version (check everything before next step)::
+7. Run the release script.
+::
 
-    bumpversion --no-commit <major, minor or patch>
+    make release-<major|minor|patch> [App Name]
 
-10. Update your changelog (edit HISTORY.rst after to customize)::
+For example:
 
-    gitchangelog > HISTORY.rst
+- ``make release-patch`` - for a patch release (bug fixes)
+- ``make release-minor`` - for a minor release (new features)
+- ``make release-major`` - for a major release (breaking changes)
 
-11. Commit your changes to version files and changelog::
+This script will automatically:
 
-    git commit -aS -m "Updating Changelog and version."
+- Initialize git flow if needed
+- Start the git flow release
+- Bump the version number
+- Update the changelog (HISTORY.rst)
+- Commit the changes
+- Finish the git flow release with signed tags
+- Push to GitHub
+- Create a GitHub release (if GitHub CLI is installed and authenticated)
 
-12. Delete the tag made by bumpversion::
+8. Close the milestone in GitHub.
 
-    git tag -d <release number>
-
-13. Finish your release::
-
-    git flow release finish -s -p <release number>
-
-15. Draft a new release in GitHub (based on the new version tag) and include
-a description. Also pick a codename because it makes you cool.
-
-16. Close the milestone in GitHub.
-
-17. Publish your new version to PyPI::
-
-    make release
-
-18. Write about your new version in your blog. Tweet it, post it on facebook.
+9. Write about your new version in your blog. Tweet it, post it on facebook.
 
 Making a new hotfix
 -------------------
 
 1. Create a new milestone in GitHub. Assign existing bugs to your new milestone.
-2. Start a new hotfix::
 
-    git flow hotfix start <new version>
+2. If you need to make code changes for the hotfix.
+::
 
-3. Code your hotfix.
-4. Bump your version (check everything before next step)::
+    git flow hotfix start <version>
+    # Make your code changes here
+    git add .
+    git commit -S -m "Fix: description of your fix"
 
-    bumpversion --no-commit <major, minor or patch>
+3. Run the hotfix script (it will start the hotfix if not already started).
+::
 
-5. Update your changelog (edit HISTORY.rst after to customize)::
+    make hotfix [App Name]
 
-    gitchangelog > HISTORY.rst
+The script will prompt you to confirm the new hotfix version before proceeding.
 
-6. Commit your changes to version files and changelog::
+This script will automatically:
 
-    git commit -aS -m "Updating Changelog and version."
+- Initialize git flow if needed
+- Start the git flow hotfix with the new patch version
+- Bump the patch version number
+- Update the changelog (HISTORY.rst)
+- Commit the version changes
+- Finish the git flow hotfix with signed tags
+- Push to GitHub
+- Create a GitHub release with "(Hotfix)" suffix (if GitHub CLI is installed and authenticated)
 
-7. Delete the tag made by bumpversion::
+**Note**: If you've already started the hotfix manually (step 2), the script will fail at
+the ``git flow hotfix start`` step. In this case, you'll need to finish manually or modify
+the script to skip the start step.
 
-    git tag -d <new version>
+4. Close the milestone in GitHub.
 
-8. Finish your hotfix::
-
-    git flow hotfix finish -s -p <new version>
-
-10. Draft a new release in GitHub (based on the new version tag) and include
-a description. Don't change the codename if it is a hotfix.
-
-11. Close the milestone in GitHub.
-
-12. Publish your new version to PyPI::
-
-    make release
-
-13. Write about your new version in your blog. Tweet it, post it on facebook.
+5. Write about your hotfix in your blog (if necessary). Notify users about the critical fix.

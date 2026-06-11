@@ -2,7 +2,6 @@
 # -*- makefile -*-
 
 SHELL = bash -e
-all_ps_hashes = $(shell docker ps -q)
 img_hash = $(shell docker images -q luisalejandro/spices:latest)
 exec_on_docker = docker compose \
 	-p spices -f docker-compose.yml exec \
@@ -84,27 +83,12 @@ docs:
 servedocs: docs start
 	@$(exec_on_docker) watchmedo shell-command -p '*.rst' -c 'make -C docs html' -R -D .
 
-release: clean start dist
-	@twine upload dist/*
-
 dist: clean start
 	@$(exec_on_docker) python3 -m build
 	ls -l dist
 
 install: clean start
 	@$(exec_on_docker) pip3 install .
-
-image:
-	@docker compose -p spices -f docker-compose.yml build \
-		--build-arg UID=$(shell id -u) \
-		--build-arg GID=$(shell id -g)
-
-start:
-	@if [ -z "$(img_hash)" ]; then\
-		make image;\
-	fi
-	@docker compose -p spices -f docker-compose.yml up \
-		--remove-orphans --no-build --detach
 
 console: start
 	@$(exec_on_docker) bash
@@ -116,11 +100,29 @@ virtualenv: start
 	@./virtualenv/bin/python3 -m pip install --upgrade wheel
 	@./virtualenv/bin/python3 -m pip install -r requirements.txt -r requirements-dev.txt
 
+# >>> rosey-maintainer:ops-docker BEGIN
+# Managed by rosey-maintainer-tools 0.1.0. Do not edit directly.
+
+PROJECT_NAME ?= spices
+all_ps_hashes = $(shell docker ps -q)
+
+image:
+	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml build \
+		--build-arg UID=$(shell id -u) \
+		--build-arg GID=$(shell id -g)
+
+start:
+	@if [ -z "$(img_hash)" ]; then\
+		make image;\
+	fi
+	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml up \
+		--remove-orphans --no-build --detach
+
 stop:
-	@docker compose -p spices -f docker-compose.yml stop app
+	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml stop
 
 down:
-	@docker compose -p spices -f docker-compose.yml down \
+	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml down \
 		--remove-orphans
 
 destroy:
@@ -129,7 +131,7 @@ destroy:
 	@echo "This will stop and delete all containers, images and volumes related to this project."
 	@echo
 	@read -p "Press ctrl+c to abort or enter to continue." -n 1 -r
-	@docker compose -p spices -f docker-compose.yml down \
+	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml down \
 		--rmi all --remove-orphans --volumes
 
 cataplum:
@@ -141,6 +143,28 @@ cataplum:
 	@if [ -n "$(all_ps_hashes)" ]; then\
 		docker kill $(shell docker ps -q);\
 	fi
-	@docker compose -p spices -f docker-compose.yml down \
+	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml down \
 		--rmi all --remove-orphans --volumes
 	@docker system prune -a -f --volumes
+# <<< rosey-maintainer:ops-docker END
+
+# >>> rosey-maintainer:ops-release BEGIN
+# Managed by rosey-maintainer-tools 0.1.0. Do not edit directly.
+
+release:
+	@./scripts/release.sh $${VERSION_TYPE}
+
+release-patch:
+	@./scripts/release.sh patch $${APP_NAME}
+
+release-minor:
+	@./scripts/release.sh minor $${APP_NAME}
+
+release-major:
+	@./scripts/release.sh major $${APP_NAME}
+
+hotfix:
+	@./scripts/hotfix.sh $${APP_NAME}
+# <<< rosey-maintainer:ops-release END
+
+.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major hotfix

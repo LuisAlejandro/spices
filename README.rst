@@ -63,6 +63,21 @@ For more information, please read the `full documentation`_.
 Getting started
 ===============
 
+Local development
+-----------------
+
+Clone the repository and use the Docker-backed Makefile targets::
+
+    $ git clone https://github.com/LuisAlejandro/spices.git
+    $ cd spices
+    $ make console
+
+Run quality checks inside the container::
+
+    $ make lint
+    $ make test
+    $ make test-all
+
 Installation
 ------------
 

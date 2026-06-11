@@ -1,9 +1,9 @@
 services:
-    app:
-        image: luisalejandro/spices:latest
-        build:
-            context: .
-            dockerfile: Dockerfile
-        volumes:
-            - .:/home/spices/app
-            - ~/Library/Caches/pip:/home/spices/.cache/pip
+  app:
+    image: luisalejandro/spices:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/home/spices/app
+      - ~/Library/Caches/pip:/home/spices/.cache/pip

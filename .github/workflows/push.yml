@@ -10,7 +10,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
-    if: github.repository == 'LuisAlejandro/spices'
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
