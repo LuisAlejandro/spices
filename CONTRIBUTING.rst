@@ -42,17 +42,23 @@ Spices could always use more documentation, whether as part of the
 official Spices docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
-Submit Feedback
-~~~~~~~~~~~~~~~
+Suggest Features
+~~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/LuisAlejandro/spices/issues.
+The best way to suggest a feature is to file an issue at
+https://github.com/LuisAlejandro/spices/issues.
 
 If you are proposing a feature:
 
-* Explain in detail how it would work.
+* Explain the problem you are trying to solve.
+* Describe the behavior you want and any alternatives you considered.
 * Keep the scope as narrow as possible, to make it easier to implement.
-* Remember that this is a volunteer-driven project, and that contributions
-  are welcome :)
+
+Submit Feedback
+~~~~~~~~~~~~~~~
+
+The best way to send other feedback is to file an issue at
+https://github.com/LuisAlejandro/spices/issues.
 
 Local Development
 -----------------

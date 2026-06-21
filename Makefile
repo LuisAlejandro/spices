@@ -185,4 +185,4 @@ undo-release:
 	@VERSION=$${VERSION} ./scripts/rollback.sh release
 # <<< rosey-maintainer:ops-release END
 
-.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
+.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
