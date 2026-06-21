@@ -75,6 +75,7 @@ Clone the repository and use the Docker-backed Makefile targets::
 Run quality checks inside the container::
 
     $ make lint
+    $ make format
     $ make test
     $ make test-all
 

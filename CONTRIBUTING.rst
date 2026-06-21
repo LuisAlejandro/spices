@@ -82,6 +82,7 @@ Quality Checks
 Before opening a pull request, run::
 
     $ make lint
+    $ make format
     $ make test
 
 To exercise all supported Python versions via tox::

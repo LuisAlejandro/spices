@@ -29,7 +29,8 @@ help:
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
 	@echo "lint - check style with flake8"
-	@echo "test - run tests quickly with the default Python"
+	@echo "format - apply Python formatting (autoflake, autopep8)"
+	@echo "test - run tests with coverage"
 	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
@@ -61,10 +62,14 @@ clean-docs:
 	rm -fr docs/_build
 
 lint: start
-	@$(exec_on_docker) flake8 spices
+	@$(exec_on_docker) tox -e lint
+
+format: start
+	@$(exec_on_docker) autoflake --in-place --recursive --remove-all-unused-imports --remove-unused-variables --ignore-init-module-imports spices
+	@$(exec_on_docker) autopep8 --in-place --recursive --aggressive --aggressive spices
 
 test: start
-	@$(exec_on_docker) python3 -m unittest -v -f
+	@$(exec_on_docker) tox -e coverage
 
 test-all: start
 	@$(exec_on_docker) tox
@@ -167,9 +172,11 @@ release-major:
 release-preflight: start
 
 
-	@$(exec_on_docker) tox -e lint
+	@make lint
 
-	@$(exec_on_docker) tox -e coverage
+	@make format
+
+	@make test
 
 
 
