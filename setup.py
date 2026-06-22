@@ -29,6 +29,11 @@ setup(
     long_description=open('README.short.rst').read(),
     packages=['spices'],
     package_dir={'spices': 'spices'},
+    entry_points={
+        'console_scripts': [
+            'spices = spices.cli:main',
+        ],
+    },
     include_package_data=True,
     install_requires=install_requires,
     # license='GPLv3',
