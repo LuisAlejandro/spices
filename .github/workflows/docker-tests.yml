@@ -145,7 +145,7 @@ jobs:
                     spices-test-${{ matrix.distro }}-${{ matrix.version }} \
                     bash -c "
                       # Install spices from the mounted workspace
-                      cd /workspace && python3 -m pip install -e . && \
+                      cd /workspace && python3 -m pip install -e . --break-system-packages && \
 
                       # Go back to test workspace and run spices install
                       cd /test-workspace && \
