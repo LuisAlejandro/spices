@@ -28,6 +28,9 @@ setup(
     description=__description__,
     long_description=open('README.short.rst').read(),
     packages=find_packages(),
+    package_data={
+        'spices.config': ['schema.yml'],
+    },
     entry_points={
         'console_scripts': [
             'spices = spices.cli:main',
