@@ -3,7 +3,7 @@
 
 import re
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 from spices import (__author__, __email__, __version__, __url__,
                        __description__)
@@ -27,8 +27,7 @@ setup(
     url=__url__,
     description=__description__,
     long_description=open('README.short.rst').read(),
-    packages=['spices'],
-    package_dir={'spices': 'spices'},
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             'spices = spices.cli:main',
