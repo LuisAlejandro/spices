@@ -150,7 +150,7 @@ jobs:
                       # Go back to test workspace and run spices install
                       cd /test-workspace && \
                       echo 'Testing spices install on ${{ matrix.distro }}:${{ matrix.version }}' && \
-                      spices install --verbose
+                      spices install
                     "
 
             - name: Cleanup
