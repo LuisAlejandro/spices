@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN useradd --uid 1000 --create-home spices
+RUN id -u spices >/dev/null 2>&1 || useradd --create-home spices
 USER spices
 WORKDIR /home/spices
 

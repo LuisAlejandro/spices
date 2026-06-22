@@ -7,7 +7,7 @@ RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*.repo \
     python3-pip \
     && yum clean all
 
-RUN useradd --uid 1000 spices
+RUN id -u spices >/dev/null 2>&1 || useradd spices
 USER spices
 WORKDIR /home/spices
 

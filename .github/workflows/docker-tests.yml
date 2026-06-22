@@ -138,12 +138,12 @@ jobs:
             - name: Test spices install in Docker container
               run: |
                   # Run the container with spices installed and test the install command
-                  docker run --rm \
+                  docker run --rm --user root \
                     -v ${PWD}:/workspace \
                     -v ${PWD}/test-workspace:/test-workspace \
                     -w /test-workspace \
                     spices-test-${{ matrix.distro }}-${{ matrix.version }} \
-                    bash -c "
+                    sh -c "
                       # Install spices from the mounted workspace
                       cd /workspace && python3 -m pip install -e . --break-system-packages && \
 
