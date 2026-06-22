@@ -106,7 +106,7 @@ virtualenv: start
 	@./virtualenv/bin/python3 -m pip install -r requirements.txt -r requirements-dev.txt
 
 # >>> rosey-maintainer:ops-docker BEGIN
-# Managed by rosey-maintainer-tools 0.4.2. Do not edit directly.
+# Managed by rosey-maintainer-tools 0.4.3. Do not edit directly.
 
 PROJECT_NAME ?= spices
 all_ps_hashes = $(shell docker ps -q)
@@ -154,7 +154,7 @@ cataplum:
 # <<< rosey-maintainer:ops-docker END
 
 # >>> rosey-maintainer:ops-release BEGIN
-# Managed by rosey-maintainer-tools 0.4.2. Do not edit directly.
+# Managed by rosey-maintainer-tools 0.4.3. Do not edit directly.
 
 release:
 	@./scripts/release.sh $${VERSION_TYPE}
