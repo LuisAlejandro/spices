@@ -57,13 +57,15 @@ jobs:
           TOXENV: ${{ matrix.toxenv }}
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
-          if [ "${TOXENV}" == "py311" ]; then
-            PYTHON_VERSION="3.11"
-          fi
+          case "${TOXENV}" in
+            py38|py39|py310) DOCKER_TAG="3.10" ;;
+            py311) DOCKER_TAG="3.11-stable" ;;
+            *) DOCKER_TAG="${PYTHON_VERSION}" ;;
+          esac
           docker run \
               -v ${PWD}:${PWD} \
               -w ${PWD} \
-              dockershelf/python:${PYTHON_VERSION} \
+              dockershelf/python:${DOCKER_TAG} \
               bash -c "pip install . && \
                        cd ${PWD}/tests/cases/debian && \
                        spices install"
