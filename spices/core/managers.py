@@ -60,6 +60,18 @@ class Script(object):
         self.execute()
         self.delete()
 
+    def get_enabled_distros(self):
+        return list(distrodata.keys())
+
+    def add_trusted_keys(self):
+        pass
+
+    def add_manager_sources(self):
+        pass
+
+    def update(self):
+        pass
+
 
 class PackageManager(object):
 
