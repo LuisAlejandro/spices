@@ -4,7 +4,7 @@ RUN apk add --no-cache \
     python3 \
     py3-pip
 
-RUN adduser -D -u 1000 spices
+RUN id -u spices >/dev/null 2>&1 || adduser -D spices
 USER spices
 WORKDIR /home/spices
 

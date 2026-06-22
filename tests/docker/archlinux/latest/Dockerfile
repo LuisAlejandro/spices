@@ -5,7 +5,7 @@ RUN pacman -Syu --noconfirm \
     python-pip \
     && pacman -Scc --noconfirm
 
-RUN useradd --uid 1000 -m spices
+RUN id -u spices >/dev/null 2>&1 || useradd -m spices
 USER spices
 WORKDIR /home/spices
 

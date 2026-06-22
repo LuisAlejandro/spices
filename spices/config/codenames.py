@@ -65,7 +65,7 @@ Example:
 arch_versions = ['rolling']
 
 alpine_version_url = 'http://dl-cdn.alpinelinux.org/alpine'
-fedora_version_url = 'http://download-ib01.fedoraproject.org/pub/fedora/linux/releases'
+fedora_version_url = 'https://dl.fedoraproject.org/pub/fedora/linux/releases/'
 
 
 olddebian_version_url = 'http://archive.debian.org/debian/dists'

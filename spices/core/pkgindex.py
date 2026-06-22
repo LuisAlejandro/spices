@@ -45,6 +45,12 @@ def request_first_bytes(debian_release_url):
         return ''
 
 
+def parse_url_html(url):
+    req = Request(url, headers={'User-Agent': 'spices/0.0.3'})
+    with closing(urlopen(req)) as response:
+        return lxml.html.fromstring(response.read())
+
+
 def get_curr_debian_codename_index(suites, url_holder):
     logger.debug('Getting Debian versions')
     idx = {}
@@ -76,8 +82,7 @@ def get_curr_debian_codename_index(suites, url_holder):
 
 
 def get_archive_debian_codename_index():
-    olddebian_version_url_html = \
-        lxml.html.parse(olddebian_version_url).getroot()
+    olddebian_version_url_html = parse_url_html(olddebian_version_url)
     links = olddebian_version_url_html.cssselect('a')
     debian_versions = [
         e.get('href')
@@ -95,7 +100,7 @@ def get_archive_debian_codename_index():
 
 def get_fedora_versions():
     logger.debug('Getting Mongo versions')
-    fedora_version_url_html = lxml.html.parse(fedora_version_url).getroot()
+    fedora_version_url_html = parse_url_html(fedora_version_url)
     links = fedora_version_url_html.cssselect('a')
     fedora_versions = [
         e.get('href')
@@ -114,7 +119,7 @@ def get_fedora_versions():
 
 def get_alpine_versions():
     logger.debug('Getting Mongo versions')
-    alpine_version_url_html = lxml.html.parse(alpine_version_url).getroot()
+    alpine_version_url_html = parse_url_html(alpine_version_url)
     links = alpine_version_url_html.cssselect('a')
     alpine_versions = [
         e.get('href')
