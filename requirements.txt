@@ -1,7 +1,7 @@
 yamale==4.0.4
 ruamel.yaml==0.17.21
 packaging==26.2
-lxml==4.9.4
+lxml==6.1.0
 cssselect==1.4.0
-python-dotenv==0.20.0
+python-dotenv==1.2.2
 python-slugify==6.1.2
