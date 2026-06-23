@@ -82,6 +82,9 @@ Ready to contribute? Here's how to set up ``spices`` for local development.
 
    Use ``make console`` for an interactive shell inside the project container.
 
+   Without Docker, run ``make virtualenv`` and use ``./virtualenv/bin/tox -e lint``
+   and ``./virtualenv/bin/tox -e coverage`` for the same checks.
+
 Quality Checks
 --------------
 

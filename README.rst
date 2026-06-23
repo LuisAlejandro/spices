@@ -79,6 +79,15 @@ Run quality checks inside the container::
     $ make test
     $ make test-all
 
+Host-only Python (no Docker)
+----------------------------
+
+When Docker is unavailable, create a local virtualenv and run tox directly::
+
+    $ make virtualenv
+    $ ./virtualenv/bin/tox -e lint
+    $ ./virtualenv/bin/tox -e coverage
+
 Installation
 ------------
 
