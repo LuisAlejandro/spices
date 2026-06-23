@@ -12,4 +12,5 @@ sphinx==4.5.0
 tox==3.25.0
 virtualenv==20.14.1
 watchdog==2.1.7
-wheel==0.47.0
+wheel==0.47.0; python_version >= '3.9'
+wheel==0.45.1; python_version < '3.9'
