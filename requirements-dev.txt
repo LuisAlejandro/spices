@@ -11,7 +11,7 @@ pydocstyle==6.1.1
 setuptools==82.0.1; python_version >= "3.9"
 setuptools==75.3.4; python_version < "3.9"
 sphinx==4.5.0
-tox==3.25.0
+tox==4.55.1
 virtualenv==20.36.1
 watchdog==6.0.0; python_version >= "3.9"
 watchdog==4.0.2; python_version < "3.9"
