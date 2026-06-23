@@ -1,0 +1,32 @@
+# Cursor Cloud specific instructions
+
+Spices is a Python CLI/library that generates a configurable JSON module index from PyPI and Python stdlib versions. There is no web server or long-running service — the product is the `spices` package (`spices/cli.py`, `spices/core/`) plus Sphinx docs under `docs/`. The published index itself lives in a separate repository and is rebuilt weekly via GitHub Actions.
+
+## Environment layout
+
+- Docker-based `make` targets (`make lint`, `make test`, `make console`) run inside a Compose container.
+- **Host-only path** (when Docker is unavailable — same pattern as dockershelf): install deps from `requirements.txt` and `requirements-dev.txt`, then run `tox` directly.
+- The Makefile also defines `make virtualenv`, which creates `./virtualenv` with pip-installed requirements (mirrors agoras-style local venv).
+
+## Lint / test / run (host Python)
+
+From repo root with tooling on `PATH` (or `./virtualenv/bin/` after `make virtualenv`):
+
+- **Lint:** `tox -e lint` (flake8 over `spices/`).
+- **Format check:** `tox -e format`.
+- **Tests + coverage:** `tox -e coverage` (unittest discovery with coverage report).
+- **All Python versions:** `tox` / `make test-all` (envlist: `py310`, `py311`, `lint`, `format`, `coverage` in `tox.ini`).
+- **CLI entry:** `spices` console script after `pip install -e .` or from the container via `make console`.
+
+## Docker (when available)
+
+- Build/start: `make image`, `make start`.
+- Quality inside container: `make lint`, `make format`, `make test`.
+- Interactive shell: `make console`.
+- Integration tests against many distro images: `.github/workflows/docker-tests.yml` and `scripts/docker-tests/` — heavy, Docker-only; not part of default PR CI (`make test`).
+
+## Non-obvious gotchas
+
+- `make format` applies autoflake + autopep8 in-place (not just a check).
+- `PYTHONPATH` must include the repo root and `spices/` for tests — `tox.ini` sets this; bare `python -m unittest` from the wrong cwd may fail imports.
+- Index generation against live PyPI is network-heavy; unit tests under `tests/` are offline-safe.
