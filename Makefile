@@ -2,6 +2,7 @@
 # -*- makefile -*-
 
 SHELL = bash -e
+export BASH_ENV := $(HOME)/.bash_env
 img_hash = $(shell docker images -q luisalejandro/spices:latest)
 exec_on_docker = docker compose \
 	-p spices -f docker-compose.yml exec \
@@ -99,7 +100,7 @@ console: start
 	@$(exec_on_docker) bash
 
 virtualenv: start
-	@python3 -m venv --clear ./virtualenv
+	@python3 -m venv --clear --copies ./virtualenv
 	@./virtualenv/bin/python3 -m pip install --upgrade pip
 	@./virtualenv/bin/python3 -m pip install --upgrade setuptools
 	@./virtualenv/bin/python3 -m pip install --upgrade wheel
