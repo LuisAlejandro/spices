@@ -82,17 +82,29 @@ Ready to contribute? Here's how to set up ``spices`` for local development.
 
    Use ``make console`` for an interactive shell inside the project container.
 
-   Without Docker, run ``make virtualenv`` and use ``./virtualenv/bin/tox -e lint``
-   and ``./virtualenv/bin/tox -e coverage`` for the same checks.
+   Without Docker, run ``make virtualenv`` (installs dev tools and ``pip install -e .``),
+   then ``./virtualenv/bin/tox -e lint`` and ``./virtualenv/bin/tox -e coverage``.
+
+   After changing ``requirements-dev.txt`` or the ``Dockerfile``, rebuild the dev
+   image with ``make image``. Inside the container, run ``pip install -e .`` before
+   using the ``spices`` CLI when the image was built dev-deps-only.
 
 Quality Checks
 --------------
 
+The lint stack is **Ruff** (format + lint), **pydocstyle**, **bandit**, and
+**Pyright**, configured in ``pyproject.toml`` and run via tox.
+
 Before opening a pull request, run::
 
-    $ make lint
-    $ make format
+    $ make lint-and-format
     $ make test
+
+Or on the host after ``make virtualenv``::
+
+    $ ./virtualenv/bin/tox -e format
+    $ ./virtualenv/bin/tox -e lint
+    $ ./virtualenv/bin/tox -e coverage
 
 To exercise all supported Python versions via tox::
 

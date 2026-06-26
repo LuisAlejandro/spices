@@ -11,6 +11,27 @@ on:
       - develop
 
 jobs:
+  lint:
+    name: Linting
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Installing dependencies
+        run: |
+          sudo apt-get install -y libatomic1
+          python3 -m pip install -r requirements-dev.txt
+
+      - name: Running linter
+        run: |
+          tox -e lint
+
   build:
     name: Build
     runs-on: ubuntu-24.04

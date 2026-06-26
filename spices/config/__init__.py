@@ -17,10 +17,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
+Spices configuration package.
 
-spices.config
-=============
-
-
-
+Re-exports distribution and package-manager configuration tables used when
+building install commands.
 """

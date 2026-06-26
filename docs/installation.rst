@@ -47,3 +47,12 @@ Once you have a copy of the source, you can install it with:
 
 .. _Github repo: https://github.com/LuisAlejandro/agoras
 .. _tarball: https://github.com/LuisAlejandro/agoras/tarball/master
+
+
+Development toolchain
+---------------------
+
+Contributors run ``tox -e lint`` and ``tox -e format`` from the repository root.
+The stack is **Ruff** (format + lint), **pydocstyle**, **bandit**, and **Pyright**,
+configured in ``pyproject.toml``. Use ``make virtualenv`` on the host or
+``make image`` / ``make console`` with Docker. See ``CONTRIBUTING.rst`` for details.

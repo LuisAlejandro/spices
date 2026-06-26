@@ -25,6 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get install -y libatomic1
           python3 -m pip install -r requirements-dev.txt
 
       - name: Run lint

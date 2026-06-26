@@ -16,98 +16,88 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""
+Package Manager Configuration Module.
+
+This module defines ``native_managers`` and ``other_managers`` dictionaries
+that describe install/update commands, arguments, and environment variables
+for each supported package manager.
+"""
+
 native_managers = {
-    'apt': {
-        'env': {
-            'DEBIAN_FRONTEND': 'noninteractive'
-        },
-        'command': 'apt-get',
-        'install': 'install',
-        'update': 'update',
-        'args': [
-            '-qq',
-            '-oApt::Install-Recommends=false',
-            '-oApt::Get::Assume-Yes=true',
-            '-oApt::Get::AllowUnauthenticated=true',
-            '-oDPkg::Options::=--force-confmiss',
-            '-oDPkg::Options::=--force-confnew',
-            '-oDPkg::Options::=--force-overwrite',
-            '-oDPkg::Options::=--force-unsafe-io'
+    "apt": {
+        "env": {"DEBIAN_FRONTEND": "noninteractive"},
+        "command": "apt-get",
+        "install": "install",
+        "update": "update",
+        "args": [
+            "-qq",
+            "-oApt::Install-Recommends=false",
+            "-oApt::Get::Assume-Yes=true",
+            "-oApt::Get::AllowUnauthenticated=true",
+            "-oDPkg::Options::=--force-confmiss",
+            "-oDPkg::Options::=--force-confnew",
+            "-oDPkg::Options::=--force-overwrite",
+            "-oDPkg::Options::=--force-unsafe-io",
         ],
     },
-    'yum': {
-        'env': {},
-        'command': 'yum',
-        'install': 'install',
-        'update': 'update',
-        'args': [
-            '--assumeyes',
-            '--nogpgcheck',
-            '--quiet'
-        ],
+    "yum": {
+        "env": {},
+        "command": "yum",
+        "install": "install",
+        "update": "update",
+        "args": ["--assumeyes", "--nogpgcheck", "--quiet"],
     },
-    'apk': {
-        'env': {},
-        'command': 'apk',
-        'install': 'add',
-        'update': 'update',
-        'args': [
-            '--no-progress',
-            '--allow-untrusted',
-            '--quiet'
-        ],
+    "apk": {
+        "env": {},
+        "command": "apk",
+        "install": "add",
+        "update": "update",
+        "args": ["--no-progress", "--allow-untrusted", "--quiet"],
     },
-    'portage': {
-        'env': {},
-        'command': 'emerge',
-        'install': '',
-        'update': '--update',
-        'args': [
-            '--quiet-build',
-            '--quiet'
-        ],
+    "portage": {
+        "env": {},
+        "command": "emerge",
+        "install": "",
+        "update": "--update",
+        "args": ["--quiet-build", "--quiet"],
     },
-    'pacman': {
-        'env': {},
-        'command': 'pacman',
-        'install': '-S',
-        'update': '-S',
-        'args': [
-            '--refresh',
-            '--noconfirm',
-            '--noprogressbar',
-            '--quiet'
-        ],
+    "pacman": {
+        "env": {},
+        "command": "pacman",
+        "install": "-S",
+        "update": "-S",
+        "args": ["--refresh", "--noconfirm", "--noprogressbar", "--quiet"],
     },
 }
 
 other_managers = {
-    'npm': {
-        'env': {},
-        'command': 'npm',
-        'install': 'install',
-        'update': '',
-        'args': [],
+    "npm": {
+        "env": {},
+        "command": "npm",
+        "install": "install",
+        "update": "",
+        "args": [],
     },
-    'yarn': {
-        'env': {},
-        'command': 'yarn',
-        'install': 'add',
-        'update': '',
-        'args': [],
+    "yarn": {
+        "env": {},
+        "command": "yarn",
+        "install": "add",
+        "update": "",
+        "args": [],
     },
-    'pip': {
-        'env': {},
-        'command': 'pip',
-        'install': 'install',
-        'update': '',
-        'args': [],
+    "pip": {
+        "env": {},
+        "command": "pip",
+        "install": "install",
+        "update": "",
+        "args": [],
     },
-    'bundler': {
-        'env': {},
-        'command': 'bundle',
-        'install': 'install',
-        'update': '',
-        'args': [],
+    "bundler": {
+        "env": {},
+        "command": "bundle",
+        "install": "install",
+        "update": "",
+        "args": [],
     },
 }
