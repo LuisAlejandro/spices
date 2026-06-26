@@ -8,73 +8,151 @@ on:
       - "release/**"
 
 jobs:
-  build:
-    name: Build
+  lint:
+    name: Linting
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-        distro:
-          - alpine
-          - arch
-          - centos
-          - debian
-          - fedora
-          - gentoo
-        npm: [true, false]
-        yarn: [true, false]
-        bundler: [true, false]
-        pip: [true, false]
-        include:
-          - python-version: "3.8"
-            toxenv: "py38"
-          - python-version: "3.9"
-            toxenv: "py39"
-          - python-version: "3.10"
-            toxenv: "py310"
-          - python-version: "3.11"
-            toxenv: "py311"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Installing dependencies
+        run: |
+          sudo apt-get install -y libatomic1
+          python3 -m pip install -r requirements-dev.txt
+
+      - name: Running linter
+        run: |
+          tox -e lint
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: |
+          sudo apt-get install -y libxml2-dev libxslt-dev
+          python3 -m pip install -r requirements-dev.txt
+          python3 -m pip install -e .
+
+      - name: Run integration test
+        run: |
+          docker run \
+              -v ${PWD}:${PWD} \
+              -w ${PWD} \
+              dockershelf/python:3.11-stable \
+              bash -c "pip install . && \
+                       cd ${PWD}/tests/cases/debian && \
+                       spices install"
+
+      - name: Test CLI entry point
+        run: |
+          spices --version
+          spices --help
+
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-24.04
+    needs: [lint, integration]
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Installing dependencies
         run: |
-          sudo apt-get install libxml2-dev libxslt-dev
-          pip install -r requirements.txt -r requirements-dev.txt
+          sudo apt-get install -y libxml2-dev libxslt-dev
+          python3 -m pip install -r requirements-dev.txt
+
       - name: Measuring coverage
         env:
-          TOXENV: ${{ matrix.toxenv }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tox -e ${TOXENV}
-      - name: Functional test
-        env:
-          TOXENV: ${{ matrix.toxenv }}
-          PYTHON_VERSION: ${{ matrix.python-version }}
+          tox -e coverage
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-py${{ matrix.python-version }}
+          path-to-lcov: ./.lcov
+          parallel: true
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-24.04
+    needs: [unit]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install documentation dependencies
         run: |
-          case "${TOXENV}" in
-            py38|py39|py310) DOCKER_TAG="3.10" ;;
-            py311) DOCKER_TAG="3.11-stable" ;;
-            *) DOCKER_TAG="${PYTHON_VERSION}" ;;
-          esac
-          docker run \
-              -v ${PWD}:${PWD} \
-              -w ${PWD} \
-              dockershelf/python:${DOCKER_TAG} \
-              bash -c "pip install . && \
-                       cd ${PWD}/tests/cases/debian && \
-                       spices install"
+          python3 -m pip install --upgrade pip setuptools
+          python3 -m pip install -r docs/requirements.txt
+
+      - name: Build documentation
+        run: |
+          cd docs
+          python3 -m sphinx -T -b html -d _build/doctrees -D language=en . _build/html
+
+      - name: Trigger ReadTheDocs webhook
+        if: success() && (github.ref_name == 'master' || github.ref_name == 'develop')
+        env:
+          RTD_WEBHOOK_URL: ${{ secrets.RTD_WEBHOOK_URL }}
+          RTD_WEBHOOK_TOKEN: ${{ secrets.RTD_WEBHOOK_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ -z "$RTD_WEBHOOK_URL" ] || [ -z "$RTD_WEBHOOK_TOKEN" ]; then
+            echo "ReadTheDocs webhook secrets RTD_WEBHOOK_URL and RTD_WEBHOOK_TOKEN must be configured"
+            exit 1
+          fi
+          curl -f -X POST \
+            -d "branches=$GITHUB_REF_NAME" \
+            -d "token=$RTD_WEBHOOK_TOKEN" \
+            "$RTD_WEBHOOK_URL"
+
+  finish:
+    name: Finish
+    runs-on: ubuntu-24.04
+    needs: [docs]
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+
   release-gate:
     name: Release Gate
     runs-on: ubuntu-24.04
-    needs: [build]
+    needs: [finish]
     steps:
       - name: Confirm all release checks passed
         run: |
           echo "Release gate passed for ${{ github.ref_name }}"
-

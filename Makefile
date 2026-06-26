@@ -29,8 +29,9 @@ help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
-	@echo "lint - check style with flake8"
-	@echo "format - apply Python formatting (autoflake, autopep8)"
+	@echo "lint - check style (Ruff, pydocstyle, bandit, Pyright via tox)"
+	@echo "format - apply Python formatting (Ruff via tox)"
+	@echo "lint-and-format - run format then lint via tox"
 	@echo "test - run tests with coverage"
 	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
@@ -66,8 +67,11 @@ lint: start
 	@$(exec_on_docker) tox -e lint
 
 format: start
-	@$(exec_on_docker) autoflake --in-place --recursive --remove-all-unused-imports --remove-unused-variables --ignore-init-module-imports spices
-	@$(exec_on_docker) autopep8 --in-place --recursive --aggressive --aggressive spices
+	@$(exec_on_docker) tox -e format
+
+lint-and-format: start
+	@$(exec_on_docker) tox -e format
+	@$(exec_on_docker) tox -e lint
 
 test: start
 	@$(exec_on_docker) tox -e coverage
@@ -99,12 +103,13 @@ install: clean start
 console: start
 	@$(exec_on_docker) bash
 
-virtualenv: start
+virtualenv:
 	@python3 -m venv --clear --copies ./virtualenv
 	@./virtualenv/bin/python3 -m pip install --upgrade pip
 	@./virtualenv/bin/python3 -m pip install --upgrade setuptools
 	@./virtualenv/bin/python3 -m pip install --upgrade wheel
-	@./virtualenv/bin/python3 -m pip install -r requirements.txt -r requirements-dev.txt
+	@./virtualenv/bin/python3 -m pip install -r requirements-dev.txt
+	@./virtualenv/bin/python3 -m pip install -e .
 
 # >>> rosey-maintainer:ops-docker BEGIN
 # Managed by rosey-maintainer-tools 0.4.3. Do not edit directly.
@@ -180,4 +185,4 @@ undo-release:
 	@VERSION=$${VERSION} ./scripts/rollback.sh release
 # <<< rosey-maintainer:ops-release END
 
-.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
+.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format lint-and-format test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release

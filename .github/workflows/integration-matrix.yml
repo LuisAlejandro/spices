@@ -1,0 +1,55 @@
+name: Integration Matrix
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch or tag to test
+        required: false
+        default: develop
+
+jobs:
+  integration:
+    name: Integration test
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - alpine
+          - arch
+          - centos
+          - debian
+          - fedora
+          - gentoo
+        npm: [true, false]
+        yarn: [true, false]
+        bundler: [true, false]
+        pip: [true, false]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Run integration test
+        run: |
+          docker run \
+              -v ${PWD}:${PWD} \
+              -w ${PWD} \
+              dockershelf/python:3.12 \
+              bash -c "pip install . && \
+                       cd ${PWD}/tests/cases/debian && \
+                       spices install"
+
+  finish:
+    name: Finish
+    runs-on: ubuntu-24.04
+    needs: integration
+    if: always()
+    steps:
+      - name: Matrix run complete
+        env:
+          INTEGRATION_REF: ${{ inputs.ref }}
+        run: |
+          echo "Integration matrix finished for ref $INTEGRATION_REF"

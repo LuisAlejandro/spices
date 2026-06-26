@@ -17,63 +17,68 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
+Spices exception hierarchy.
 
-This module contains common juju Exceptions.
-
-This file holds the generic errors which are sensible for several
-areas of juju.
-
+This module defines base and concrete exception classes raised during
+distribution detection, configuration validation, and install orchestration.
 """
 
 
 class SpicesError(Exception):
-
     """
+    Base exception for all Spices errors.
 
-    All errors in juju are subclasses of this.
-
-    This error should not be raised by itself, though, since it means
-    pretty much nothing.  It's useful mostly as something to catch instead.
-
+    Subclasses represent specific failure modes. Do not raise this class
+    directly; catch it to handle any Spices-specific error.
     """
 
 
 class CannotIdentifyDistribution(SpicesError):
-    """"""
+    """Raised when the host Linux distribution cannot be identified."""
 
     def __str__(self):
-        return ("We could not identify your distribution.")
+        """Return a user-facing message."""
+        return "We could not identify your distribution."
 
 
 class UnsupportedDistribution(SpicesError):
-    """"""
+    """Raised when the detected distribution is not supported."""
 
     def __str__(self):
-        return ("Your distribution is not supported.")
+        """Return a user-facing message."""
+        return "Your distribution is not supported."
 
 
 class SpicesAreEmpty(SpicesError):
-    """"""
+    """Raised when spices configuration content is empty."""
 
     def __str__(self):
-        return ("")
+        """Return an empty user-facing message."""
+        return ""
 
 
 class ThereAreNoCommands(SpicesError):
-    """"""
+    """Raised when no install commands were generated from configuration."""
 
     def __str__(self):
-        return ("")
+        """Return an empty user-facing message."""
+        return ""
 
 
 class SpicesNotFound(SpicesError):
-    """"""
+    """Raised when ``.spices.yml`` is missing from the working directory."""
 
     def __init__(self, currdir):
+        """
+        Initialize with the directory that was searched.
+
+        :param currdir: current working directory path.
+        """
         super().__init__(currdir)
         self.currdir = currdir
 
     def __str__(self):
+        """Return a user-facing message with documentation link."""
         return (
             f"A .spices.yml was not found on current directory {self.currdir}"
             "\n"
@@ -84,13 +89,19 @@ class SpicesNotFound(SpicesError):
 
 
 class SchemaNotFound(SpicesError):
-    """"""
+    """Raised when the Yamale schema file is missing from the install."""
 
     def __init__(self, schemadir):
+        """
+        Initialize with the schema directory that was searched.
+
+        :param schemadir: path to the expected schema directory.
+        """
         super().__init__(schemadir)
         self.schemadir = schemadir
 
     def __str__(self):
+        """Return a user-facing message with documentation link."""
         return (
             f"A schema was not found on the schema directory {self.schemadir}"
             "\n"
@@ -101,11 +112,17 @@ class SchemaNotFound(SpicesError):
 
 
 class ValidationError(SpicesError):
-    """"""
+    """Raised when ``.spices.yml`` fails Yamale schema validation."""
 
     def __init__(self, details):
+        """
+        Initialize with validation error details.
+
+        :param details: Yamale validation error message.
+        """
         super().__init__(details)
         self.details = details
 
     def __str__(self):
-        return (f"{self.details}\n")
+        """Return the validation error details."""
+        return f"{self.details}\n"

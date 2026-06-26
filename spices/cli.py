@@ -24,9 +24,9 @@ parameters, show help, version and controls the logging level.
 
 from argparse import ArgumentParser
 
-from . import __version__, __description__
-from .core.logger import logger
+from . import __description__, __version__
 from .api.install import main as install
+from .core.logger import logger
 
 
 def commandline(argv=None):
@@ -45,37 +45,41 @@ def commandline(argv=None):
     assert isinstance(argv, (list, type(None)))
 
     parser = ArgumentParser(
-        prog='spices', description=__description__, add_help=False,
-        usage='\t%(prog)s [options]\n\t%(prog)s <command> [options]')
-    gen_options = parser.add_argument_group('General Options')
+        prog="spices",
+        description=__description__,
+        add_help=False,
+        usage="\t%(prog)s [options]\n\t%(prog)s <command> [options]",
+    )
+    gen_options = parser.add_argument_group("General Options")
     gen_options.add_argument(
-        '-V', '--version', action='version',
-        version='spices {0}'.format(__version__),
-        help='Print version and exit.')
-    gen_options.add_argument(
-        '-h', '--help', action='help', help='Show this help message and exit.')
-    subparsers = parser.add_subparsers(title='Commands', metavar='')
+        "-V", "--version", action="version", version="spices {0}".format(__version__), help="Print version and exit."
+    )
+    gen_options.add_argument("-h", "--help", action="help", help="Show this help message and exit.")
+    subparsers = parser.add_subparsers(title="Commands", metavar="")
 
     install_parser = subparsers.add_parser(
-        'install', prog='spices', usage='%(prog)s install [options]',
-        help='Install dependencies defined in .spices.yml', add_help=False)
+        "install",
+        prog="spices",
+        usage="%(prog)s install [options]",
+        help="Install dependencies defined in .spices.yml",
+        add_help=False,
+    )
     install_parser.set_defaults(command=install)
-    install_gen_options = install_parser.add_argument_group('General Options')
+    install_gen_options = install_parser.add_argument_group("General Options")
     install_gen_options.add_argument(
-        '-V', '--version', action='version',
-        version='spices {0}'.format(__version__),
-        help='Print version and exit.')
-    install_gen_options.add_argument(
-        '-h', '--help', action='help', help='Show this help message and exit.')
-    install_options = install_parser.add_argument_group('Install Options')
+        "-V", "--version", action="version", version="spices {0}".format(__version__), help="Print version and exit."
+    )
+    install_gen_options.add_argument("-h", "--help", action="help", help="Show this help message and exit.")
+    install_options = install_parser.add_argument_group("Install Options")
+    install_options.add_argument("-c", "--conffile", metavar="<path>", help="A path pointing to a .spice.yml file.")
     install_options.add_argument(
-        '-c', '--conffile', metavar='<path>',
-        help='A path pointing to a .spice.yml file.')
-    install_options.add_argument(
-        '-l', '--loglevel', default='INFO', metavar='<level>',
-        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-        help=('Logger verbosity level (default: INFO). Must be one of: '
-              'DEBUG, INFO, WARNING, ERROR or CRITICAL.'))
+        "-l",
+        "--loglevel",
+        default="INFO",
+        metavar="<level>",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help=("Logger verbosity level (default: INFO). Must be one of: DEBUG, INFO, WARNING, ERROR or CRITICAL."),
+    )
 
     return parser, parser.parse_args(argv)
 
@@ -97,32 +101,33 @@ def main(argv=None):
 
     parser, args = commandline(argv)
 
-    if not hasattr(args, 'command'):
+    if not hasattr(args, "command"):
         parser.print_help()
         return 0
 
     logger.start()
     logger.loglevel(args.loglevel)
-    logger.debug('Starting execution.')
+    logger.debug("Starting execution.")
 
     try:
         status = args.command(**vars(args))
     except KeyboardInterrupt:
-        logger.critical('Execution interrupted by user!')
+        logger.critical("Execution interrupted by user!")
         status = 1
     except Exception as e:
         logger.exception(e)
-        logger.critical('Shutting down due to fatal error!')
+        logger.critical("Shutting down due to fatal error!")
         status = 1
     else:
-        logger.debug('Ending execution.')
+        logger.debug("Ending execution.")
 
     logger.stop()
     return status
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import re
     import sys
-    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+
+    sys.argv[0] = re.sub(r"(-script\.pyw?|\.exe)?$", "", sys.argv[0])
     sys.exit(main())
