@@ -6,7 +6,7 @@ Spices is a Python CLI/library that generates a configurable JSON module index f
 
 - Docker-based `make` targets (`make lint`, `make test`, `make console`) run inside a Compose container.
 - **Host-only path** (when Docker is unavailable): run `make virtualenv` (installs `requirements-dev.txt` and `pip install -e .`), then `tox` directly.
-- The Makefile also defines `make virtualenv`, which creates `./virtualenv` with dev tools and an editable install of `spices` (agoras-style local venv).
+- The Makefile also defines `make virtualenv`, which creates `./virtualenv` with dev tools and an editable install of `spices` (spices-style local venv).
 
 ## Lint / test / run (host Python)
 
