@@ -49,5 +49,7 @@ jobs:
     if: always()
     steps:
       - name: Matrix run complete
+        env:
+          INTEGRATION_REF: ${{ inputs.ref }}
         run: |
-          echo "Integration matrix finished for ref ${{ inputs.ref }}"
+          echo "Integration matrix finished for ref $INTEGRATION_REF"
