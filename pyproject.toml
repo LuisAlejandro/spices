@@ -5,7 +5,6 @@ venvPath = "."
 venv = "virtualenv"
 reportMissingImports = "warning"
 reportMissingModuleSource = "none"
-
 [tool.ruff]
 line-length = 120
 target-version = "py310"

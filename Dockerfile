@@ -1,11 +1,10 @@
 FROM dockershelf/python:3.12
-LABEL maintainer="Luis Alejandro Martínez Faneyth <luis@luisalejandro.org>"
 
 ARG UID=1000
 ARG GID=1000
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    sudo git make libyaml-dev libatomic1 jq \
+    sudo git make libyaml-dev libatomic1 jq libxml2-dev libxslt-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ADD requirements-dev.txt /root/
