@@ -1,4 +1,5 @@
 FROM dockershelf/python:3.12
+LABEL maintainer="Luis Alejandro Martínez Faneyth <luis@luisalejandro.org>"
 
 ARG UID=1000
 ARG GID=1000

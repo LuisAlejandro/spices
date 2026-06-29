@@ -37,7 +37,7 @@ help:
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
-	@echo "dist - package"
+	@echo "build - build PyPI sdist/wheel packages"
 	@echo "install - install the package to the active Python's site-packages"
 
 clean: clean-build clean-pyc clean-test clean-docs
@@ -93,9 +93,13 @@ docs:
 servedocs: docs start
 	@$(exec_on_docker) watchmedo shell-command -p '*.rst' -c 'make -C docs html' -R -D .
 
-dist: clean start
+dependencies:
+	@:
+
+build: clean start
 	@$(exec_on_docker) python3 -m build
-	ls -l dist
+	@$(exec_on_docker) twine check dist/*
+	@ls -l dist
 
 install: clean start
 	@$(exec_on_docker) pip3 install .
@@ -110,9 +114,6 @@ virtualenv:
 	@./virtualenv/bin/python3 -m pip install --upgrade wheel
 	@./virtualenv/bin/python3 -m pip install -r requirements-dev.txt
 	@./virtualenv/bin/python3 -m pip install -e .
-
-# >>> rosey-maintainer:ops-docker BEGIN
-# Managed by rosey-maintainer-tools 0.4.4. Do not edit directly.
 
 PROJECT_NAME ?= spices
 all_ps_hashes = $(shell docker ps -q)
@@ -157,10 +158,6 @@ cataplum:
 	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml down \
 		--rmi all --remove-orphans --volumes
 	@docker system prune -a -f --volumes
-# <<< rosey-maintainer:ops-docker END
-
-# >>> rosey-maintainer:ops-release BEGIN
-# Managed by rosey-maintainer-tools 0.4.4. Do not edit directly.
 
 release:
 	@./scripts/release.sh $${VERSION_TYPE}
@@ -175,7 +172,10 @@ release-major:
 	@./scripts/release.sh major $${APP_NAME}
 
 
-release-preflight: start
+release-preflight:
+	@make image
+	@make dependencies
+	@make build
 	@make format
 	@make lint
 	@make test
@@ -183,6 +183,5 @@ release-preflight: start
 undo-release:
 	@: "$${VERSION:?Set VERSION=x.y.z before running make undo-release}"
 	@VERSION=$${VERSION} ./scripts/rollback.sh release
-# <<< rosey-maintainer:ops-release END
 
-.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format lint-and-format test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
+.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format lint-and-format test test-all coverage docs servedocs build dependencies install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
