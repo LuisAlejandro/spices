@@ -97,7 +97,8 @@ The lint stack is **Ruff** (format + lint), **pydocstyle**, **bandit**, and
 
 Before opening a pull request, run::
 
-    $ make lint-and-format
+    $ make format
+    $ make lint
     $ make test
 
 Or on the host after ``make virtualenv``::
