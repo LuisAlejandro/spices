@@ -16,44 +16,50 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""
+Linux Distribution Configuration Module.
+
+This module defines ``distrodata``, mapping supported Linux distribution
+names to their native and third-party package manager configurations.
+"""
+
 from .managers import native_managers, other_managers
 
-
 distrodata = {
-    'arch': {
-        'managers': {
-            'native': native_managers['pacman'],
+    "arch": {
+        "managers": {
+            "native": native_managers["pacman"],
             **other_managers,
         }
     },
-    'alpine': {
-        'managers': {
-            'native': native_managers['apk'],
+    "alpine": {
+        "managers": {
+            "native": native_managers["apk"],
             **other_managers,
         }
     },
-    'debian': {
-        'managers': {
-            'native': native_managers['apt'],
+    "debian": {
+        "managers": {
+            "native": native_managers["apt"],
             **other_managers,
         }
     },
-    'fedora': {
-        'managers': {
-            'native': native_managers['yum'],
+    "fedora": {
+        "managers": {
+            "native": native_managers["yum"],
             **other_managers,
         }
     },
-    'centos': {
-        'managers': {
-            'native': native_managers['yum'],
+    "centos": {
+        "managers": {
+            "native": native_managers["yum"],
             **other_managers,
         }
     },
-    'gentoo': {
-        'managers': {
-            'native': native_managers['portage'],
+    "gentoo": {
+        "managers": {
+            "native": native_managers["portage"],
             **other_managers,
         }
-    }
+    },
 }

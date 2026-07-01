@@ -37,6 +37,7 @@ setup(
         ],
     },
     include_package_data=True,
+    python_requires='>=3.10',
     install_requires=install_requires,
     # license='GPLv3',
     zip_safe=False,
