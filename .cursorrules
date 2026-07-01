@@ -1,12 +1,12 @@
 # Cursor Cloud specific instructions
 
-Spices is a Python CLI/library that generates a configurable JSON module index from PyPI and Python stdlib versions. There is no web server or long-running service — the product is the `spices` package (`spices/cli.py`, `spices/core/`) plus Sphinx docs under `docs/`. The published index itself lives in a separate repository and is rebuilt weekly via GitHub Actions.
+Spices is a Python CLI/library — a "universal dependency resolver". There is no web server or long-running service. The product is the `spices` console script (`spices/cli.py`, `spices/api/`, `spices/core/`) plus Sphinx docs under `docs/`. The shipped CLI command is `spices install`, which validates a `.spices.yml` file, detects the host Linux distribution, and installs the declared dependencies via the matching package manager (apt/yum/apk/pacman/portage/npm/yarn/pip/bundler or a `custom` script).
 
 ## Environment layout
 
 - Docker-based `make` targets (`make lint`, `make test`, `make console`) run inside a Compose container.
 - **Host-only path** (when Docker is unavailable): run `make virtualenv` (installs `requirements-dev.txt` and `pip install -e .`), then `tox` directly.
-- The Makefile also defines `make virtualenv`, which creates `./virtualenv` with dev tools and an editable install of `spices` (agoras-style local venv).
+- The Makefile also defines `make virtualenv`, which creates `./virtualenv` with dev tools and an editable install of `spices` (spices-style local venv).
 
 ## Lint / test / run (host Python)
 
@@ -30,4 +30,11 @@ From repo root with tooling on `PATH` (or `./virtualenv/bin/` after `make virtua
 
 - `make format` runs `tox -e format` (Ruff in-place format and import fixes).
 - `PYTHONPATH` must include the repo root and `spices/` for tests — `tox.ini` sets this; bare `python -m unittest` from the wrong cwd may fail imports.
-- Index generation against live PyPI is network-heavy; unit tests under `tests/` are offline-safe.
+- The unit tests under `tests/` are offline-safe, but `spices install` builds a distributions database from live Debian/Fedora/Alpine mirrors and needs network access.
+
+### Running `spices install` (the CLI) — must use the Debian container
+
+- The cloud VM is **Ubuntu**, and `spices install` cannot run there: distro detection uses `lsb_release`, which returns `Ubuntu`, a string that is not a key in `spices/config/distributions.py` (only `debian/arch/fedora/alpine/centos/gentoo`), so it raises `KeyError: 'Ubuntu'`. This is application behavior — do not "fix" it during setup.
+- Run `spices install` inside the **Debian** dev container instead: that image has no `lsb_release`, so detection falls back to `/etc/os-release` (`ID=debian`) and works (`You are using debian (testing).`).
+- Docker is not preinstalled (kept out of the startup update script). When you need the install CLI, install Docker CE and start `dockerd` manually (no systemd). For Docker 29, `/etc/docker/daemon.json` needs `storage-driver: fuse-overlayfs` **and** `features.containerd-snapshotter: false`, plus `iptables-legacy`; run `sudo dockerd` in tmux. Then `make image` / `make start` (or `docker compose ... up`), `sudo python3 -m pip install -e .` in the container, and `spices install -c <.spices.yml>`.
+- The root `.spices.yml` installs real apt + pip packages; use a minimal pip-only config for smoke tests to avoid mutating the system.
