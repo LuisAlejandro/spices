@@ -62,134 +62,124 @@ Example:
     base_fedora_codename_index['20'] returns ['heisenbug']
 """
 
-arch_versions = ['rolling']
+arch_versions = ["rolling"]
 
-alpine_version_url = 'http://dl-cdn.alpinelinux.org/alpine'
-fedora_version_url = 'https://dl.fedoraproject.org/pub/fedora/linux/releases/'
+alpine_version_url = "http://dl-cdn.alpinelinux.org/alpine"
+fedora_version_url = "https://dl.fedoraproject.org/pub/fedora/linux/releases/"
 
 
-olddebian_version_url = 'http://archive.debian.org/debian/dists'
-olddebian_release_url_holder = 'http://archive.debian.org/debian/dists/{0}/Release'
+olddebian_version_url = "http://archive.debian.org/debian/dists"
+olddebian_release_url_holder = "http://archive.debian.org/debian/dists/{0}/Release"
 
-debian_release_url_holder = 'http://deb.debian.org/debian/dists/{0}/Release'
-debian_suites = [
-    'oldoldoldstable', 'oldoldstable', 'oldstable',
-    'stable', 'testing', 'unstable'
-]
-debian_oldversioning = [
-    'buzz', 'rex', 'bo', 'hamm', 'slink',
-    'potato', 'woody', 'sarge'
-]
+debian_release_url_holder = "http://deb.debian.org/debian/dists/{0}/Release"
+debian_suites = ["oldoldoldstable", "oldoldstable", "oldstable", "stable", "testing", "unstable"]
+debian_oldversioning = ["buzz", "rex", "bo", "hamm", "slink", "potato", "woody", "sarge"]
 
-base_arch_codename_index = {
-    'rolling': ['rolling']
-}
+base_arch_codename_index = {"rolling": ["rolling"]}
 
 base_alpine_codename_index = {
-    '1.5': ['v1.5'],
-    '1.6': ['v1.6'],
-    '1.7': ['v1.7'],
-    '1.8': ['v1.8'],
-    '1.9': ['v1.9'],
-    '1.10': ['v1.10'],
-    '1.11': ['v1.11'],
-    '1.12': ['v1.12'],
-    '1.13': ['v1.13'],
-    '1.14': ['v1.14'],
-    '1.15': ['v1.15'],
-    '1.16': ['v1.16'],
-    '2.0': ['v2.0'],
-    '2.1': ['v2.1'],
-    '2.2': ['v2.2'],
-    '2.3': ['v2.3'],
-    '2.4': ['v2.4'],
-    '2.5': ['v2.5'],
-    '2.6': ['v2.6'],
-    '2.7': ['v2.7'],
-    '3.0': ['v3.0'],
-    '3.1': ['v3.1'],
-    '3.2': ['v3.2'],
-    '3.3': ['v3.3'],
-    '3.4': ['v3.4'],
-    '3.5': ['v3.5'],
-    '3.6': ['v3.6'],
-    '3.7': ['v3.7'],
-    '3.8': ['v3.8'],
-    '3.9': ['v3.9'],
-    '3.10': ['v3.10'],
-    '3.11': ['v3.11'],
-    '3.12': ['v3.12'],
-    '3.13': ['v3.13'],
-    '3.14': ['v3.14'],
-    '3.15': ['v3.15'],
-    '3.16': ['v3.16'],
-    '3.17': ['v3.17'],
-    '3.18': ['v3.18'],
-    '3.19': ['v3.19'],
-    '3.20': ['v3.20'],
-    '3.21': ['v3.21'],
-    '3.22': ['v3.22'],
+    "1.5": ["v1.5"],
+    "1.6": ["v1.6"],
+    "1.7": ["v1.7"],
+    "1.8": ["v1.8"],
+    "1.9": ["v1.9"],
+    "1.10": ["v1.10"],
+    "1.11": ["v1.11"],
+    "1.12": ["v1.12"],
+    "1.13": ["v1.13"],
+    "1.14": ["v1.14"],
+    "1.15": ["v1.15"],
+    "1.16": ["v1.16"],
+    "2.0": ["v2.0"],
+    "2.1": ["v2.1"],
+    "2.2": ["v2.2"],
+    "2.3": ["v2.3"],
+    "2.4": ["v2.4"],
+    "2.5": ["v2.5"],
+    "2.6": ["v2.6"],
+    "2.7": ["v2.7"],
+    "3.0": ["v3.0"],
+    "3.1": ["v3.1"],
+    "3.2": ["v3.2"],
+    "3.3": ["v3.3"],
+    "3.4": ["v3.4"],
+    "3.5": ["v3.5"],
+    "3.6": ["v3.6"],
+    "3.7": ["v3.7"],
+    "3.8": ["v3.8"],
+    "3.9": ["v3.9"],
+    "3.10": ["v3.10"],
+    "3.11": ["v3.11"],
+    "3.12": ["v3.12"],
+    "3.13": ["v3.13"],
+    "3.14": ["v3.14"],
+    "3.15": ["v3.15"],
+    "3.16": ["v3.16"],
+    "3.17": ["v3.17"],
+    "3.18": ["v3.18"],
+    "3.19": ["v3.19"],
+    "3.20": ["v3.20"],
+    "3.21": ["v3.21"],
+    "3.22": ["v3.22"],
 }
 
 base_debian_codename_index = {
-    '1.1': ['buzz'],
-    '1.2': ['rex'],
-    '1.3': ['bo'],
-    '2.0': ['hamm'],
-    '2.1': ['slink'],
-    '2.2': ['potato'],
-    '3.0': ['woody'],
-    '3.1': ['sarge'],
-    '4': ['etch'],
-    '5': ['lenny'],
-    '6': ['squeeze'],
-    '7': ['wheezy'],
-    '8': ['jessie'],
-    '9': ['stretch'],
-    '10': ['buster'],
-    '11': ['bullseye'],
-    '12': ['bookworm'],
-    '13': ['trixie'],
-    '14': ['bookworm'],
+    "1.1": ["buzz"],
+    "1.2": ["rex"],
+    "1.3": ["bo"],
+    "2.0": ["hamm"],
+    "2.1": ["slink"],
+    "2.2": ["potato"],
+    "3.0": ["woody"],
+    "3.1": ["sarge"],
+    "4": ["etch"],
+    "5": ["lenny"],
+    "6": ["squeeze"],
+    "7": ["wheezy"],
+    "8": ["jessie"],
+    "9": ["stretch"],
+    "10": ["buster"],
+    "11": ["bullseye"],
+    "12": ["bookworm"],
+    "13": ["trixie"],
+    "14": ["bookworm"],
 }
 
 base_fedora_codename_index = {
-    '1': ['yarrow'],
-    '2': ['tettnang'],
-    '3': ['heidelberg'],
-    '4': ['stentz'],
-    '5': ['bordeaux'],
-    '6': ['zod'],
-    '7': ['moonshine'],
-    '8': ['werewolf'],
-    '9': ['sulphur'],
-    '10': ['cambridge'],
-    '11': ['leonidas'],
-    '12': ['constantine'],
-    '13': ['goddard'],
-    '14': ['laughlin'],
-    '15': ['lovelock'],
-    '16': ['verne'],
-    '17': ['beefy-miracle'],
-    '18': ['spherical-cow'],
-    '19': ['schrodingers-cat'],
-    '20': ['heisenbug'],
-    'unstable': ['rawhide'],
+    "1": ["yarrow"],
+    "2": ["tettnang"],
+    "3": ["heidelberg"],
+    "4": ["stentz"],
+    "5": ["bordeaux"],
+    "6": ["zod"],
+    "7": ["moonshine"],
+    "8": ["werewolf"],
+    "9": ["sulphur"],
+    "10": ["cambridge"],
+    "11": ["leonidas"],
+    "12": ["constantine"],
+    "13": ["goddard"],
+    "14": ["laughlin"],
+    "15": ["lovelock"],
+    "16": ["verne"],
+    "17": ["beefy-miracle"],
+    "18": ["spherical-cow"],
+    "19": ["schrodingers-cat"],
+    "20": ["heisenbug"],
+    "unstable": ["rawhide"],
 }
 
 base_centos_codename_index = {
-    '1': ['1'],
-    '2': ['2'],
-    '3': ['3'],
-    '4': ['4'],
-    '5': ['5'],
-    '6': ['6'],
-    '7': ['7'],
-    '8': ['8'],
-    'stream8': ['stream8'],
-    'stream9': ['stream9'],
+    "1": ["1"],
+    "2": ["2"],
+    "3": ["3"],
+    "4": ["4"],
+    "5": ["5"],
+    "6": ["6"],
+    "7": ["7"],
+    "8": ["8"],
+    "stream8": ["stream8"],
+    "stream9": ["stream9"],
 }
 
-base_gentoo_codename_index = {
-    'rolling': ['rolling']
-}
+base_gentoo_codename_index = {"rolling": ["rolling"]}

@@ -72,12 +72,26 @@ Clone the repository and use the Docker-backed Makefile targets::
     $ cd spices
     $ make console
 
-Run quality checks inside the container::
+Run quality checks inside the container (run ``pip install -e .`` first if the
+dev image was rebuilt)::
 
-    $ make lint
-    $ make format
+    $ make lint-and-format
     $ make test
     $ make test-all
+
+Host-only Python (no Docker)
+----------------------------
+
+When Docker is unavailable, create a local virtualenv (dev deps + editable install)
+and run tox directly::
+
+    $ make virtualenv
+    $ ./virtualenv/bin/tox -e format
+    $ ./virtualenv/bin/tox -e lint
+    $ ./virtualenv/bin/tox -e coverage
+
+Lint uses **Ruff**, **pydocstyle**, **bandit**, and **Pyright** from
+``pyproject.toml``.
 
 Installation
 ------------
