@@ -2,20 +2,20 @@
 Internal API
 ============
 
-This section documents the internal API of the Agoras package, organized by subpackages and modules.
+This section documents the internal API of the Spices package, organized by subpackages and modules.
 
-agoras package
+spices package
 --------------
 
-.. automodule:: agoras
+.. automodule:: spices
     :members:
     :private-members:
     :special-members:
 
-agoras.cli module
+spices.cli module
 -----------------
 
-.. automodule:: agoras.cli
+.. automodule:: spices.cli
     :members:
     :private-members:
     :special-members:

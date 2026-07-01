@@ -2,6 +2,7 @@
 # -*- makefile -*-
 
 SHELL = bash -e
+export BASH_ENV := $(HOME)/.bash_env
 img_hash = $(shell docker images -q luisalejandro/spices:latest)
 exec_on_docker = docker compose \
 	-p spices -f docker-compose.yml exec \
@@ -28,14 +29,15 @@ help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
-	@echo "lint - check style with flake8"
-	@echo "format - apply Python formatting (autoflake, autopep8)"
+	@echo "lint - check style (Ruff, pydocstyle, bandit, Pyright via tox)"
+	@echo "format - apply Python formatting (Ruff via tox)"
+	@echo "lint-and-format - run format then lint via tox"
 	@echo "test - run tests with coverage"
 	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
-	@echo "dist - package"
+	@echo "build - build PyPI sdist/wheel packages"
 	@echo "install - install the package to the active Python's site-packages"
 
 clean: clean-build clean-pyc clean-test clean-docs
@@ -65,8 +67,11 @@ lint: start
 	@$(exec_on_docker) tox -e lint
 
 format: start
-	@$(exec_on_docker) autoflake --in-place --recursive --remove-all-unused-imports --remove-unused-variables --ignore-init-module-imports spices
-	@$(exec_on_docker) autopep8 --in-place --recursive --aggressive --aggressive spices
+	@$(exec_on_docker) tox -e format
+
+lint-and-format: start
+	@$(exec_on_docker) tox -e format
+	@$(exec_on_docker) tox -e lint
 
 test: start
 	@$(exec_on_docker) tox -e coverage
@@ -88,9 +93,13 @@ docs:
 servedocs: docs start
 	@$(exec_on_docker) watchmedo shell-command -p '*.rst' -c 'make -C docs html' -R -D .
 
-dist: clean start
+dependencies:
+	@:
+
+build: clean start
 	@$(exec_on_docker) python3 -m build
-	ls -l dist
+	@$(exec_on_docker) twine check dist/*
+	@ls -l dist
 
 install: clean start
 	@$(exec_on_docker) pip3 install .
@@ -98,15 +107,13 @@ install: clean start
 console: start
 	@$(exec_on_docker) bash
 
-virtualenv: start
-	@python3 -m venv --clear ./virtualenv
+virtualenv:
+	@python3 -m venv --clear --copies ./virtualenv
 	@./virtualenv/bin/python3 -m pip install --upgrade pip
 	@./virtualenv/bin/python3 -m pip install --upgrade setuptools
 	@./virtualenv/bin/python3 -m pip install --upgrade wheel
-	@./virtualenv/bin/python3 -m pip install -r requirements.txt -r requirements-dev.txt
-
-# >>> rosey-maintainer:ops-docker BEGIN
-# Managed by rosey-maintainer-tools 0.4.3. Do not edit directly.
+	@./virtualenv/bin/python3 -m pip install -r requirements-dev.txt
+	@./virtualenv/bin/python3 -m pip install -e .
 
 PROJECT_NAME ?= spices
 all_ps_hashes = $(shell docker ps -q)
@@ -151,10 +158,6 @@ cataplum:
 	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml down \
 		--rmi all --remove-orphans --volumes
 	@docker system prune -a -f --volumes
-# <<< rosey-maintainer:ops-docker END
-
-# >>> rosey-maintainer:ops-release BEGIN
-# Managed by rosey-maintainer-tools 0.4.3. Do not edit directly.
 
 release:
 	@./scripts/release.sh $${VERSION_TYPE}
@@ -169,20 +172,16 @@ release-major:
 	@./scripts/release.sh major $${APP_NAME}
 
 
-release-preflight: start
-
-
-	@make lint
-
+release-preflight:
+	@make image
+	@make dependencies
+	@make build
 	@make format
-
+	@make lint
 	@make test
-
-
 
 undo-release:
 	@: "$${VERSION:?Set VERSION=x.y.z before running make undo-release}"
 	@VERSION=$${VERSION} ./scripts/rollback.sh release
-# <<< rosey-maintainer:ops-release END
 
-.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format test test-all coverage docs servedocs dist install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
+.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format lint-and-format test test-all coverage docs servedocs build dependencies install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release

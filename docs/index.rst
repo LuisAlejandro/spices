@@ -1,43 +1,43 @@
-.. image:: https://raw.githubusercontent.com/LuisAlejandro/agoras/develop/docs/_static/title.svg
+.. image:: https://raw.githubusercontent.com/LuisAlejandro/spices/develop/docs/_static/title.svg
 
 -----
 
-.. image:: https://img.shields.io/pypi/v/agoras.svg
-   :target: https://pypi.org/project/agoras/
+.. image:: https://img.shields.io/pypi/v/spices.svg
+   :target: https://pypi.org/project/spices/
    :alt: PyPI Package
 
-.. image:: https://img.shields.io/github/release/LuisAlejandro/agoras.svg
-   :target: https://github.com/LuisAlejandro/agoras/releases
+.. image:: https://img.shields.io/github/release/LuisAlejandro/spices.svg
+   :target: https://github.com/LuisAlejandro/spices/releases
    :alt: Github Releases
 
-.. image:: https://img.shields.io/github/issues/LuisAlejandro/agoras
-   :target: https://github.com/LuisAlejandro/agoras/issues?q=is%3Aopen
+.. image:: https://img.shields.io/github/issues/LuisAlejandro/spices
+   :target: https://github.com/LuisAlejandro/spices/issues?q=is%3Aopen
    :alt: Github Issues
 
-.. image:: https://img.shields.io/github/actions/workflow/status/LuisAlejandro/agoras/push.yml?branch=master
-   :target: https://github.com/LuisAlejandro/agoras/actions/workflows/push.yml
+.. image:: https://img.shields.io/github/actions/workflow/status/LuisAlejandro/spices/push.yml?branch=master
+   :target: https://github.com/LuisAlejandro/spices/actions/workflows/push.yml
    :alt: Push
 
-.. image:: https://coveralls.io/repos/github/LuisAlejandro/agoras/badge.svg?branch=develop
-   :target: https://coveralls.io/github/LuisAlejandro/agoras?branch=develop
+.. image:: https://coveralls.io/repos/github/LuisAlejandro/spices/badge.svg?branch=develop
+   :target: https://coveralls.io/github/LuisAlejandro/spices?branch=develop
    :alt: Coverage
 
-.. image:: https://cla-assistant.io/readme/badge/LuisAlejandro/agoras
-   :target: https://cla-assistant.io/LuisAlejandro/agoras
+.. image:: https://cla-assistant.io/readme/badge/LuisAlejandro/spices
+   :target: https://cla-assistant.io/LuisAlejandro/spices
    :alt: Contributor License Agreement
 
-.. image:: https://readthedocs.org/projects/agoras/badge/?version=latest
-   :target: https://readthedocs.org/projects/agoras/?badge=latest
+.. image:: https://readthedocs.org/projects/spices/badge/?version=latest
+   :target: https://readthedocs.org/projects/spices/?badge=latest
    :alt: Read The Docs
 
 .. image:: https://img.shields.io/discord/809504357359157288.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2
    :target: https://discord.gg/GRnq3qQ9SB
    :alt: Discord Channel
 
-.. _GitHub actions: https://github.com/LuisAlejandro/agoras-actions
-.. _full documentation: https://agoras.readthedocs.org
+.. _GitHub actions: https://github.com/LuisAlejandro/spices-actions
+.. _full documentation: https://spices.readthedocs.org
 
-Agoras is a python utility that helps publish and delete posts on the most 
+Spices is a python utility that helps publish and delete posts on the most
 popular social networks (twitter, facebook, instagram, linkedin, discord and tiktok).
 
 This repository stores the application. There's also `GitHub actions`_
