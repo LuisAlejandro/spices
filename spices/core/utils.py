@@ -17,13 +17,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
+Spices common utilities module.
 
-spices.common.utils
-===================
-
-This module contains common and low level functions to all modules in Spices.
-
+This module contains common and low level functions shared across Spices.
 """
+
 from collections.abc import Iterable
 
 
