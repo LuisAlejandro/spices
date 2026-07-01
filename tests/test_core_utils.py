@@ -16,15 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import doctest
 import sys
 import unittest
-import doctest
 
 
 def load_tests(loader, tests, pattern):
-    tests.addTests(doctest.DocTestSuite('spices.core.utils'))
+    tests.addTests(doctest.DocTestSuite("spices.core.utils"))
     return tests
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(unittest.main())

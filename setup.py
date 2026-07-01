@@ -5,52 +5,50 @@ import re
 
 from setuptools import find_packages, setup
 
-from spices import (__author__, __email__, __version__, __url__,
-                       __description__)
+from spices import __author__, __description__, __email__, __url__, __version__
 
 
 def read_requirements(reqfile):
-    with open(reqfile, 'r') as r:
-        reqs = filter(None, r.read().split('\n'))
-    return [re.sub(r'\t*# pyup.*', r'', x) for x in reqs]
+    with open(reqfile, "r") as r:
+        reqs = filter(None, r.read().split("\n"))
+    return [re.sub(r"\t*# pyup.*", r"", x) for x in reqs]
 
 
-install_requires = read_requirements('requirements.txt')
-tests_require = read_requirements('requirements.txt') + \
-    read_requirements('requirements-dev.txt')
+install_requires = read_requirements("requirements.txt")
+tests_require = read_requirements("requirements.txt") + read_requirements("requirements-dev.txt")
 
 setup(
-    name='spices',
+    name="spices",
     version=__version__,
     author=__author__,
     author_email=__email__,
     url=__url__,
     description=__description__,
-    long_description=open('README.short.rst').read(),
+    long_description=open("README.short.rst").read(),
     packages=find_packages(),
     package_data={
-        'spices.config': ['schema.yml'],
+        "spices.config": ["schema.yml"],
     },
     entry_points={
-        'console_scripts': [
-            'spices = spices.cli:main',
+        "console_scripts": [
+            "spices = spices.cli:main",
         ],
     },
     include_package_data=True,
-    python_requires='>=3.10',
+    python_requires=">=3.10",
     install_requires=install_requires,
     # license='GPLv3',
     zip_safe=False,
-    keywords=['odoo', 'requirements'],
+    keywords=["odoo", "requirements"],
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
-    test_suite='tests',
-    tests_require=tests_require
+    test_suite="tests",
+    tests_require=tests_require,
 )
