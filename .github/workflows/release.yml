@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout release tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.release.tag_name }}
 
@@ -25,6 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get install -y libatomic1
           python3 -m pip install -r requirements-dev.txt
 
       - name: Run lint
@@ -39,7 +40,7 @@ jobs:
     needs: verify-release-tag
     steps:
       - name: Checkout release tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.release.tag_name }}
 
@@ -90,3 +91,23 @@ jobs:
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trigger-readthedocs:
+    name: Trigger ReadTheDocs Build
+    runs-on: ubuntu-24.04
+    needs: publish-to-pypi
+    steps:
+      - name: Trigger ReadTheDocs webhook
+        env:
+          RTD_WEBHOOK_URL: ${{ secrets.RTD_WEBHOOK_URL }}
+          RTD_WEBHOOK_TOKEN: ${{ secrets.RTD_WEBHOOK_TOKEN }}
+        run: |
+          if [ -z "$RTD_WEBHOOK_URL" ] || [ -z "$RTD_WEBHOOK_TOKEN" ]; then
+            echo "ReadTheDocs webhook secrets RTD_WEBHOOK_URL and RTD_WEBHOOK_TOKEN must be configured"
+            exit 1
+          fi
+          curl -f -X POST \
+            -d "branches=${{ github.event.release.tag_name }}" \
+            -d "token=$RTD_WEBHOOK_TOKEN" \
+            "$RTD_WEBHOOK_URL"
+          echo "Triggered ReadTheDocs build for version ${{ github.event.release.tag_name }}"

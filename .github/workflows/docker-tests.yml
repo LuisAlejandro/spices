@@ -27,7 +27,7 @@ jobs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
         steps:
             - name: Checkout repo
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
 
             - name: Discover Docker images
               id: set-matrix
@@ -65,7 +65,7 @@ jobs:
             matrix: ${{ fromJson(needs.discover-images.outputs.matrix) }}
         steps:
             - name: Checkout repo
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
 
             - name: Set up Python
               uses: actions/setup-python@v6

@@ -1,13 +1,13 @@
 Using the application
 ---------------------
 
-agoras publish
+spices publish
 ~~~~~~~~~~~~~~
 
 This command allows you to publish a post in different social network.::
 
-    $ agoras publish --help
-    usage: agoras publish [options]
+    $ spices publish --help
+    usage: spices publish [options]
 
     General Options:
       -V, --version         Print version and exit.
@@ -81,10 +81,10 @@ This command allows you to publish a post in different social network.::
 Examples of usage
 ~~~~~~~~~~~~~~~~~
 
-- :doc:`Using Agoras with Twitter <twitter>`
-- :doc:`Using Agoras with Facebook <facebook>`
-- :doc:`Using Agoras with Instagram <instagram>`
-- :doc:`Using Agoras with LinkedIn <linkedin>`
+- :doc:`Using Spices with Twitter <twitter>`
+- :doc:`Using Spices with Facebook <facebook>`
+- :doc:`Using Spices with Instagram <instagram>`
+- :doc:`Using Spices with LinkedIn <linkedin>`
 
 
 Credentials
