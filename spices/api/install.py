@@ -16,45 +16,56 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""
+Spices Installation API Module.
+
+This module validates ``.spices.yml`` configuration against the project schema
+and runs the installer to apply dependencies on the host system.
+"""
+
 import os
 
 import yamale
 
-from ..core.logger import logger
-from ..core.errors import SpicesNotFound, SchemaNotFound, ValidationError
+from ..core.errors import SchemaNotFound, SpicesNotFound, ValidationError
 from ..core.installer import Installer
+from ..core.logger import logger
 
 
 def validate(spicespath, schemapath):
+    """
+    Validate spices configuration data against a Yamale schema.
 
+    :param spicespath: path to the ``.spices.yml`` file.
+    :param schemapath: path to the Yamale schema file.
+    :return: validated Yamale data object.
+    :raises ValidationError: if validation fails.
+    """
     try:
-        schema = yamale.make_schema(schemapath, parser='ruamel')
-        data = yamale.make_data(spicespath, parser='ruamel')
+        schema = yamale.make_schema(schemapath, parser="ruamel")
+        data = yamale.make_data(spicespath, parser="ruamel")
         yamale.validate(schema, data)
         return data
     except yamale.YamaleError as e:
         for result in e.results:
-            logger.error(
-                "Error validating data "
-                "'%s' with '%s'\n\t" % (result.data, result.schema)
-            )
+            logger.error("Error validating data '%s' with '%s'\n\t" % (result.data, result.schema))
             for error in result.errors:
                 raise ValidationError(error)
 
 
 def main(**kwargs):
-
-    conffile = kwargs.get('conffile')
+    """Validate ``.spices.yml`` and run the installer (optional ``conffile`` kwarg)."""
+    conffile = kwargs.get("conffile")
     currdir = os.getcwd()
     filedir = os.path.dirname(os.path.abspath(__file__))
-    basedir = os.path.abspath(os.path.join(filedir, '..'))
-    schemadir = os.path.join(basedir, 'config')
-    schemapath = os.path.join(schemadir, 'schema.yml')
+    basedir = os.path.abspath(os.path.join(filedir, ".."))
+    schemadir = os.path.join(basedir, "config")
+    schemapath = os.path.join(schemadir, "schema.yml")
 
     if conffile:
         spicespath = os.path.abspath(conffile)
     else:
-        spicespath = os.path.join(currdir, '.spices.yml')
+        spicespath = os.path.join(currdir, ".spices.yml")
 
     if not os.path.isfile(spicespath):
         raise SpicesNotFound(currdir)
@@ -65,4 +76,4 @@ def main(**kwargs):
     spices = validate(spicespath, schemapath)
 
     installer = Installer(spices)
-    # installer.execute()
+    installer.execute()

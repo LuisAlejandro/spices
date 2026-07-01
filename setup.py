@@ -3,7 +3,7 @@
 
 import re
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 from spices import (__author__, __email__, __version__, __url__,
                        __description__)
@@ -27,9 +27,17 @@ setup(
     url=__url__,
     description=__description__,
     long_description=open('README.short.rst').read(),
-    packages=['spices'],
-    package_dir={'spices': 'spices'},
+    packages=find_packages(),
+    package_data={
+        'spices.config': ['schema.yml'],
+    },
+    entry_points={
+        'console_scripts': [
+            'spices = spices.cli:main',
+        ],
+    },
     include_package_data=True,
+    python_requires='>=3.10',
     install_requires=install_requires,
     # license='GPLv3',
     zip_safe=False,
@@ -40,8 +48,6 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
     ],

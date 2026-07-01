@@ -1,9 +1,12 @@
-version: "3"
 services:
-  spices:
+  app:
     image: luisalejandro/spices:latest
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     volumes:
-      - .:/home/luisalejandro/app
+      - .:/home/spices/app
+      - ~/Library/Caches/pip:/home/spices/.cache/pip

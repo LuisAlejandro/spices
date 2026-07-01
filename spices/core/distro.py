@@ -16,18 +16,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .errors import UnsupportedDistribution
+"""
+Distribution install orchestration.
+
+This module defines ``Distribution``, which binds detected host metadata to a
+parsed Spices configuration and runs package manager commands for that distro.
+"""
+
 from .spices import Spices
-from .logger import logger
 
 
 class Distribution(object):
+    """Run Spices install steps for a single detected distribution."""
 
-    derivatives = {
-        'ubuntu': 'debian'
-    }
+    derivatives = {"ubuntu": "debian"}
 
     def __init__(self, distname, codename, version, data, distributions):
+        """
+        Initialize distribution context and build the command list.
+
+        :param distname: detected distribution name.
+        :param codename: distribution codename or release label.
+        :param version: distribution version string.
+        :param data: parsed spices configuration data.
+        :param distributions: supported distribution metadata mapping.
+        """
         self.distributions = distributions
         self.distname = distname
         self.codename = codename
@@ -37,22 +50,40 @@ class Distribution(object):
         self.allowed_managers = []
         self.spices = Spices(data)
         self.metadistro = self.get_metadistro()
+        import pprint
+
+        pprint.pprint(self.spices.commandlist)
 
     def get_metadistro(self):
-        if self.distname not in self.derivatives:
-            raise UnsupportedDistribution()
-        return self.metadistro[self.distname]
+        """Return the parent distribution name when ``distname`` is a derivative."""
+        if self.distname in self.derivatives:
+            return self.derivatives[self.distname]
+        return self.distname
 
-    def update_package_db(self):
+    def add_manager_sources(self):
+        """Add repository sources for enabled managers on this distribution."""
         for cmd in self.spices.commandlist:
             enabled_distros = cmd.get_enabled_distros()
-            if self.distname in enabled_distros or \
-               self.metadistro in enabled_distros:
+            if self.distname in enabled_distros or self.metadistro in enabled_distros:
+                cmd.add_manager_sources()
+
+    def add_trusted_keys(self):
+        """Install trusted keys for enabled managers on this distribution."""
+        for cmd in self.spices.commandlist:
+            enabled_distros = cmd.get_enabled_distros()
+            if self.distname in enabled_distros or self.metadistro in enabled_distros:
+                cmd.add_trusted_keys()
+
+    def update_package_db(self):
+        """Refresh package indexes for enabled managers on this distribution."""
+        for cmd in self.spices.commandlist:
+            enabled_distros = cmd.get_enabled_distros()
+            if self.distname in enabled_distros or self.metadistro in enabled_distros:
                 cmd.update()
 
     def install(self):
+        """Install dependencies for enabled managers on this distribution."""
         for cmd in self.spices.commandlist:
             enabled_distros = cmd.get_enabled_distros()
-            if self.distname in enabled_distros or \
-               self.metadistro in enabled_distros:
+            if self.distname in enabled_distros or self.metadistro in enabled_distros:
                 cmd.install()

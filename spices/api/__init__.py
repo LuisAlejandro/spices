@@ -15,3 +15,12 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""Public API entry points for Spices."""
+
+"""
+Spices API Package.
+
+This package exposes high-level API entry points for validating and installing
+dependencies from ``.spices.yml`` configuration files.
+"""

@@ -1,0 +1,14 @@
+version: 1
+managers:
+    debian:
+        dependencies:
+            - procps
+            - curl
+        repositories:
+            - https://packages.microsoft.com/repos/code stable main
+            - https://dl.google.com/linux/chrome/deb stable main
+        gpg_keys:
+            - https://packages.microsoft.com/keys/microsoft.asc
+            - https://dl.google.com/linux/linux_signing_key.pub
+        postinstall: |
+            echo "Installation completed with repositories and GPG keys"

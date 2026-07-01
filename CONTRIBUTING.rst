@@ -35,80 +35,95 @@ Implement Features
 Look through the GitHub issues for features. Anything tagged with "feature"
 is open to whoever wants to implement it.
 
-Write Documentation
-~~~~~~~~~~~~~~~~~~~
+Improve Documentation
+~~~~~~~~~~~~~~~~~~~~~
 
 Spices could always use more documentation, whether as part of the
 official Spices docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
-Submit Feedback
-~~~~~~~~~~~~~~~
+Suggest Features
+~~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/LuisAlejandro/spices/issues.
+The best way to suggest a feature is to file an issue at
+https://github.com/LuisAlejandro/spices/issues.
 
 If you are proposing a feature:
 
-* Explain in detail how it would work.
+* Explain the problem you are trying to solve.
+* Describe the behavior you want and any alternatives you considered.
 * Keep the scope as narrow as possible, to make it easier to implement.
-* Remember that this is a volunteer-driven project, and that contributions
-  are welcome :)
 
-Get Started!
-------------
+Submit Feedback
+~~~~~~~~~~~~~~~
 
-Ready to contribute? Here's how to set up `spices` for local development.
+The best way to send other feedback is to file an issue at
+https://github.com/LuisAlejandro/spices/issues.
+
+Local Development
+-----------------
+
+Ready to contribute? Here's how to set up ``spices`` for local development.
 
 1. Fork the `spices` repo on GitHub.
 2. Clone your fork locally::
 
     $ git clone git@github.com:your_name_here/spices.git
+    $ cd spices
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+3. Create a branch from ``develop``::
 
-    $ mkvirtualenv spices
-    $ cd spices/
-    $ python setup.py develop
-
-4. Create a branch for local development::
-
+    $ git checkout develop
     $ git checkout -b name-of-your-bugfix-or-feature
 
-   Now you can make your changes locally.
+4. Start the Docker development environment::
 
-5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
+    $ make console
 
-    $ flake8 spices
-    $ python3 -m unittest -v -f
-    $ tox
+   Use ``make console`` for an interactive shell inside the project container.
 
-   To get flake8 and tox, just pip install them into your virtualenv.
+   Without Docker, run ``make virtualenv`` (installs dev tools and ``pip install -e .``),
+   then ``./virtualenv/bin/tox -e lint`` and ``./virtualenv/bin/tox -e coverage``.
 
-6. Commit your changes and push your branch to GitHub::
+   After changing ``requirements-dev.txt`` or the ``Dockerfile``, rebuild the dev
+   image with ``make image``. Inside the container, run ``pip install -e .`` before
+   using the ``spices`` CLI when the image was built dev-deps-only.
 
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
+Quality Checks
+--------------
 
-7. Submit a pull request through the GitHub website.
+The lint stack is **Ruff** (format + lint), **pydocstyle**, **bandit**, and
+**Pyright**, configured in ``pyproject.toml`` and run via tox.
+
+Before opening a pull request, run::
+
+    $ make format
+    $ make lint
+    $ make test
+
+Or on the host after ``make virtualenv``::
+
+    $ ./virtualenv/bin/tox -e format
+    $ ./virtualenv/bin/tox -e lint
+    $ ./virtualenv/bin/tox -e coverage
+
+To exercise all supported Python versions via tox::
+
+    $ make test-all
 
 Pull Request Guidelines
 -----------------------
 
 Before you submit a pull request, check that it meets these guidelines:
 
-1. The pull request should include tests.
-2. If the pull request adds functionality, the docs should be updated. Put
-   your new functionality into a function with a docstring, and add the
-   feature to the list in README.rst.
-3. Check https://github.com/LuisAlejandro/spices/actions
-   and make sure that the tests pass for all supported Python versions.
+1. The pull request should include tests for behavior changes.
+2. If the pull request adds functionality, update the docs when user-facing
+   behavior changes.
+3. Keep the scope focused and link related issues.
+4. Check https://github.com/LuisAlejandro/spices/actions and make sure CI passes.
 
-Tips
-----
+Maintainer Notes
+----------------
 
-To run a subset of tests::
-
-
-    $ python -m unittest tests.test_core_logger
-    $ python -m unittest tests.test_core_utils
+Releases are handled by maintainers. Contributors should not publish packages
+or push release tags.
