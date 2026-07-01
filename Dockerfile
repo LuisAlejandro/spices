@@ -1,22 +1,33 @@
-FROM dockershelf/python:3.10
-LABEL maintainer "Luis Alejandro Martínez Faneyth <luis@collagelabs.org>"
+FROM dockershelf/python:3.12
+LABEL maintainer="Luis Alejandro Martínez Faneyth <luis@luisalejandro.org>"
 
-RUN apt-get update && \
-    apt-get install sudo python3.10-venv git make libyaml-dev
+ARG UID=1000
+ARG GID=1000
 
-RUN ln -s /usr/bin/python3.10 /usr/bin/python
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sudo git make libyaml-dev libatomic1 jq libxml2-dev libxslt-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-ADD requirements.txt requirements-dev.txt /root/
-RUN pip3 install -r /root/requirements.txt -r /root/requirements-dev.txt
-RUN rm -rf /root/requirements.txt /root/requirements-dev.txt
+ADD requirements-dev.txt /root/
+RUN pip3 install -r /root/requirements-dev.txt
+RUN rm -rf /root/requirements-dev.txt
 
-RUN echo "luisalejandro ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/luisalejandro
-RUN useradd -ms /bin/bash luisalejandro
+RUN EXISTUSER=$(getent passwd | awk -F':' '$3 == '$UID' {print $1}') && \
+    [ -n "${EXISTUSER}" ] && deluser ${EXISTUSER} || true
 
-USER luisalejandro
+RUN EXISTGROUP=$(getent group | awk -F':' '$3 == '$GID' {print $1}') && \
+    [ -n "${EXISTGROUP}" ] && delgroup ${EXISTGROUP} || true
 
-RUN mkdir -p /home/luisalejandro/app
+RUN groupadd -g "${GID}" spices || true
+RUN useradd -u "${UID}" -g "${GID}" -ms /bin/bash spices
+RUN echo "spices ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/spices
 
-WORKDIR /home/luisalejandro/app
+USER spices
 
-CMD tail -f /dev/null
+RUN mkdir -p \
+    /home/spices/app \
+    /home/spices/.cache/pip
+
+WORKDIR /home/spices/app
+
+CMD ["tail", "-f", "/dev/null"]

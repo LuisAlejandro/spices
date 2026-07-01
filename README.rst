@@ -46,7 +46,7 @@
 .. _full documentation: https://spices.readthedocs.org
 .. _Contents: https://www.debian.org/distrib/packages#search_contents
 
-Current version: 0.0.1
+Current version: 0.0.3
 
 Spices generates a configurable index written in ``JSON`` format that
 serves as a database for applications like `spices`_. It can be configured
@@ -62,6 +62,36 @@ For more information, please read the `full documentation`_.
 
 Getting started
 ===============
+
+Local development
+-----------------
+
+Clone the repository and use the Docker-backed Makefile targets::
+
+    $ git clone https://github.com/LuisAlejandro/spices.git
+    $ cd spices
+    $ make console
+
+Run quality checks inside the container (run ``pip install -e .`` first if the
+dev image was rebuilt)::
+
+    $ make lint-and-format
+    $ make test
+    $ make test-all
+
+Host-only Python (no Docker)
+----------------------------
+
+When Docker is unavailable, create a local virtualenv (dev deps + editable install)
+and run tox directly::
+
+    $ make virtualenv
+    $ ./virtualenv/bin/tox -e format
+    $ ./virtualenv/bin/tox -e lint
+    $ ./virtualenv/bin/tox -e coverage
+
+Lint uses **Ruff**, **pydocstyle**, **bandit**, and **Pyright** from
+``pyproject.toml``.
 
 Installation
 ------------

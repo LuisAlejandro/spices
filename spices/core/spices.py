@@ -16,41 +16,52 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""
+Spices Configuration Parser Module.
+
+This module provides the ``Spices`` class for parsing and normalizing
+``.spices.yml`` configuration content into a sequence of package manager
+command objects. It maps manager names to concrete ``PackageManager``
+implementations and merges layered configuration data when multiple
+sources are supplied.
+"""
+
 from .errors import SpicesAreEmpty, ThereAreNoCommands
-from .managers import Script, Yum, Apt, Pacman, Portage, Apk, \
-    Npm, Yarn, Pip, Bundler
+from .managers import Apk, Apt, Bundler, Npm, Pacman, Pip, Portage, Script, Yarn, Yum
 
 
 class Spices(object):
+    """Parse spices configuration and build package manager command objects."""
 
     native_managers_map = {
-        'apt-get': Apt,
-        'apt': Apt,
-        'yum': Yum,
-        'apk': Apk,
-        'pacman': Pacman,
-        'emerge': Portage,
-        'portage': Portage,
-        'custom': Script
+        "apt-get": Apt,
+        "apt": Apt,
+        "yum": Yum,
+        "apk": Apk,
+        "pacman": Pacman,
+        "emerge": Portage,
+        "portage": Portage,
+        "custom": Script,
     }
 
-    distribution_map = {
-        'debian': Apt,
-        'fedora': Yum,
-        'alpine': Apk,
-        'arch': Pacman,
-        'gentoo': Portage,
-        'centos': Yum
-    }
+    distribution_map = {"debian": Apt, "fedora": Yum, "alpine": Apk, "arch": Pacman, "gentoo": Portage, "centos": Yum}
 
     other_managers_map = {
-        'npm': Npm,
-        'yarn': Yarn,
-        'pip': Pip,
-        'bundler': Bundler,
+        "npm": Npm,
+        "yarn": Yarn,
+        "pip": Pip,
+        "bundler": Bundler,
     }
 
     def __init__(self, content):
+        """
+        Initialize a Spices instance from configuration content.
+
+        :param content: spices configuration dict or list of ``(data, path)``
+            tuples to merge incrementally.
+        :raises SpicesAreEmpty: if ``content`` is falsy.
+        :raises ThereAreNoCommands: if no install commands are produced.
+        """
         eqmap = {
             **self.native_managers_map,
             **self.distribution_map,
@@ -64,21 +75,75 @@ class Spices(object):
         if not content:
             raise SpicesAreEmpty()
 
-        self.content = content
-        self.commandlist = []
+        # Merge the content incrementally if it's a list
+        if isinstance(content, list):
+            self.content = self.merge_data_incrementally(content)
+        else:
+            self.content = content
 
+        self.commandlist = []
         self.generate_commandlist()
 
         if not self.commandlist:
             raise ThereAreNoCommands()
 
+    def merge_data_incrementally(self, content_list):
+        """
+        Merge data incrementally from a list of tuples.
+
+        Each tuple contains ``(config_dict, file_path)``.
+        Merges from last to first: third merges into second, second into first, etc.
+
+        :param content_list: list of ``(config_dict, file_path)`` tuples.
+        :return: merged configuration dictionary.
+        """
+        if not content_list:
+            return {}
+
+        if len(content_list) == 1:
+            return content_list[0][0].copy() if content_list[0][0] else {}
+
+        # Start from the end and work backwards
+        # For [A, B, C]: C merges into B, then B merges into A
+        result_data = content_list[-1][0].copy() if content_list[-1][0] else {}
+
+        # Merge from second-to-last down to first
+        for i in range(len(content_list) - 2, -1, -1):
+            item_data = content_list[i][0]
+            if item_data:
+                result_data = self._deep_merge_dicts(item_data, result_data)
+
+        return result_data
+
+    def _deep_merge_dicts(self, dict1, dict2):
+        """
+        Deep merge two dictionaries. dict2 values take precedence over dict1.
+        """
+        result = dict1.copy()
+
+        for key, value in dict2.items():
+            if key in result:
+                if isinstance(result[key], dict) and isinstance(value, dict):
+                    result[key] = self._deep_merge_dicts(result[key], value)
+                elif isinstance(result[key], list) and isinstance(value, list):
+                    # For lists, extend them
+                    result[key] = result[key] + value
+                else:
+                    # For other types, dict2 value takes precedence
+                    result[key] = value
+            else:
+                result[key] = value
+
+        return result
+
     def generate_commandlist(self):
-        for manager, data in self.content['managers'].items():
+        """Build ``commandlist`` from manager entries in ``self.content``."""
+        for manager, data in self.content["managers"].items():
             if manager not in self.__allowed_managers:
                 continue
-            if 'dependencies' in data:
+            if "dependencies" in data:
                 Manager = self.__eqmap[manager]
                 d = manager if manager in self.distribution_map else None
-                self.commandlist.append(Manager(data['dependencies'], d))
-            if 'postinstall' in data:
-                self.commandlist.append(Script(data['postinstall']))
+                self.commandlist.append(Manager(data["dependencies"], d, data))
+            if "postinstall" in data:
+                self.commandlist.append(Script(data["postinstall"]))

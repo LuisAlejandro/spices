@@ -22,18 +22,18 @@ All modules use the same global logging object. No messages will be emitted
 until the logger is started.
 """
 
-import sys
-import types
 import logging
+import sys
+from typing import cast
 
 levelNames = {
-    'CRITICAL': 50,
-    'ERROR': 40,
-    'WARN': 30,
-    'WARNING': 30,
-    'INFO': 20,
-    'DEBUG': 10,
-    'NOTSET': 0,
+    "CRITICAL": 50,
+    "ERROR": 40,
+    "WARN": 30,
+    "WARNING": 30,
+    "INFO": 20,
+    "DEBUG": 10,
+    "NOTSET": 0,
 }
 
 
@@ -45,7 +45,7 @@ class ControlableLogger(logging.Logger):
     The stop method halts output.
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name: str | None = None):
         """
         Initialize this ``ControlableLogger``.
 
@@ -58,14 +58,7 @@ class ControlableLogger(logging.Logger):
 
         .. versionadded:: 0.1.0
         """
-        # Initializing according to old-style or new-style clases
-        if hasattr(types, 'ClassType') and \
-           isinstance(logging.Logger, types.ClassType):
-            logging.Logger.__init__(self, name)
-        if (hasattr(types, 'TypeType') and
-           isinstance(logging.Logger, types.TypeType)) or \
-           isinstance(logging.Logger, type):
-            super(ControlableLogger, self).__init__(name)
+        super().__init__(name or __name__.split(".")[0])
 
         self.parent = logging.root
 
@@ -76,7 +69,7 @@ class ControlableLogger(logging.Logger):
 
         #: Attribute ``formatstring`` (string): Stores the string that
         #: will be used to format the logger output.
-        self.formatstring = '[%(levelname)s] %(message)s'
+        self.formatstring = "[%(levelname)s] %(message)s"
 
     def start(self, filename=None):
         """
@@ -92,7 +85,7 @@ class ControlableLogger(logging.Logger):
             sh.setFormatter(logging.Formatter(self.formatstring))
             self.addHandler(sh)
             if filename:
-                fh = logging.FileHandler(filename, mode='w')
+                fh = logging.FileHandler(filename, mode="w")
                 fh.setFormatter(logging.Formatter(self.formatstring))
                 self.addHandler(fh)
             self.disabled = False
@@ -110,7 +103,7 @@ class ControlableLogger(logging.Logger):
                 self.removeHandler(h)
             self.disabled = True
 
-    def loglevel(self, level='INFO'):
+    def loglevel(self, level="INFO"):
         """
         Set the log level for this logger.
 
@@ -136,9 +129,10 @@ class ControlableLogger(logging.Logger):
             self.setLevel(levelNames[level])
 
     def configpkg(self, name=None):
-
+        """Reconfigure log formatters to include the given package name prefix."""
+        """Set log format to include the given package name prefix."""
         if name:
-            formatstring = '[%(levelname)s] ({0}) %(message)s'.format(name)
+            formatstring = "[%(levelname)s] ({0}) %(message)s".format(name)
             for h in list(self.handlers):
                 h.setFormatter(logging.Formatter(formatstring))
                 self.removeHandler(h)
@@ -151,4 +145,4 @@ class ControlableLogger(logging.Logger):
 
 
 logging.setLoggerClass(ControlableLogger)
-logger = logging.getLogger(__name__.split('.')[0])
+logger = cast(ControlableLogger, logging.getLogger(__name__.split(".")[0]))
