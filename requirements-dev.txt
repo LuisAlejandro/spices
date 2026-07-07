@@ -2,7 +2,7 @@ build==1.5.0
 bumpversion==0.6.0
 coverage==7.14.3
 coveralls==4.1.0
-ruff==0.11.12
+ruff==0.15.20
 pyright==1.1.400
 bandit==1.9.4
 gitchangelog==3.0.4
