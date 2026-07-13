@@ -1,1 +1,1 @@
-Spices generates a configurable JSON module index from the Python Package Index and Python Standard Library releases, similar to a Debian ``Contents`` file for PyPI. This repository contains the application; the published index is rebuilt separately in the spices-build repository.
+Spices is a universal dependency resolver: declare OS and language packages in a ``.spices.yml`` file and install them with the matching native or language package manager (apt, yum/dnf, apk, pacman, portage, pip, npm, yarn, bundler, or custom scripts).

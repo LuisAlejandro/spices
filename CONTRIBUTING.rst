@@ -78,6 +78,7 @@ Ready to contribute? Here's how to set up ``spices`` for local development.
 
 4. Start the Docker development environment::
 
+    $ make image
     $ make console
 
    Use ``make console`` for an interactive shell inside the project container.
@@ -87,7 +88,7 @@ Ready to contribute? Here's how to set up ``spices`` for local development.
 
    After changing ``requirements-dev.txt`` or the ``Dockerfile``, rebuild the dev
    image with ``make image``. Inside the container, run ``pip install -e .`` before
-   using the ``spices`` CLI when the image was built dev-deps-only.
+   using the ``spices`` CLI when the image was built with dev deps only.
 
 Quality Checks
 --------------

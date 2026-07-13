@@ -2,9 +2,9 @@
 
 ..
 
-    Spices is an application that generates a Module Index from the
-    Python Package Index (PyPI) and also from various versions of the Python
-    Standard Library.
+    Spices is a universal dependency resolver: declare packages once in
+    ``.spices.yml`` and install them with the matching native or language
+    package manager on the host.
 
 .. image:: https://img.shields.io/pypi/v/spices.svg
    :target: https://pypi.org/project/spices/
@@ -18,7 +18,7 @@
    :target: https://github.com/LuisAlejandro/spices/issues?q=is%3Aopen
    :alt: Github Issues
 
-.. image:: https://github.com/LuisAlejandro/spices/workflows/Push/badge.svg
+.. image:: https://github.com/LuisAlejandro/spices/actions/workflows/push.yml/badge.svg
    :target: https://github.com/LuisAlejandro/spices/actions?query=workflow%3APush
    :alt: Push
 
@@ -41,22 +41,14 @@
 |
 |
 
-.. _different repository: https://github.com/LuisAlejandro/spices-build
-.. _spices: https://github.com/LuisAlejandro/spices
 .. _full documentation: https://spices.readthedocs.org
-.. _Contents: https://www.debian.org/distrib/packages#search_contents
 
 Current version: 0.0.3
 
-Spices generates a configurable index written in ``JSON`` format that
-serves as a database for applications like `spices`_. It can be configured
-to process only a range of packages (by initial letter) and to have
-memory, time or log size limits. It basically aims to mimic what the
-`Contents`_ file means for a Debian based package repository, but for the
-Python Package Index.
-
-This repository stores the application. The actual index lives in a `different
-repository`_ and is rebuilt weekly via Github Actions.
+Spices validates a ``.spices.yml`` file and installs the declared
+dependencies using the host's native package manager (apt, yum/dnf, apk,
+pacman, portage) or language managers (pip, npm, yarn, bundler), with
+optional repositories, GPG keys, post-install hooks, and custom scripts.
 
 For more information, please read the `full documentation`_.
 
@@ -73,8 +65,8 @@ Therefore, you can use pip to install the stable version::
 
     $ pip install --upgrade spices
 
-If you want to install the development version (not recomended), you can
-install directlty from GitHub like this::
+If you want to install the development version (not recommended), you can
+install directly from GitHub like this::
 
     $ pip install --upgrade https://github.com/LuisAlejandro/spices/archive/master.tar.gz
 
@@ -83,7 +75,8 @@ Usage
 
 .. _USAGE: https://github.com/LuisAlejandro/spices/blob/develop/USAGE.rst
 
-See USAGE_ for details.
+Create a ``.spices.yml``, then run ``spices install``. See USAGE_ for details
+(some legacy sections may lag the current CLI).
 
 Getting help
 ============
@@ -91,7 +84,7 @@ Getting help
 .. _Discord server: https://discord.gg/M36s8tTnYS
 .. _StackOverflow: http://stackoverflow.com/questions/ask
 
-If you have any doubts or problems, suscribe to our `Discord server`_ and ask for help. You can also
+If you have any doubts or problems, subscribe to our `Discord server`_ and ask for help. You can also
 ask your question on StackOverflow_ (tag it ``spices``) or drop me an email at luis@collagelabs.org.
 
 Contributing

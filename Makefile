@@ -11,6 +11,8 @@ exec_on_docker = docker compose \
 # Release configuration
 VERSION_TYPE ?= patch
 APP_NAME ?= spices
+PROJECT_NAME ?= spices
+all_ps_hashes = $(shell docker ps -q)
 
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -104,20 +106,6 @@ build: clean start
 install: clean start
 	@$(exec_on_docker) pip3 install .
 
-console: start
-	@$(exec_on_docker) bash
-
-virtualenv:
-	@python3 -m venv --clear --copies ./virtualenv
-	@./virtualenv/bin/python3 -m pip install --upgrade pip
-	@./virtualenv/bin/python3 -m pip install --upgrade setuptools
-	@./virtualenv/bin/python3 -m pip install --upgrade wheel
-	@./virtualenv/bin/python3 -m pip install -r requirements-dev.txt
-	@./virtualenv/bin/python3 -m pip install -e .
-
-PROJECT_NAME ?= spices
-all_ps_hashes = $(shell docker ps -q)
-
 image:
 	@docker compose -p $(PROJECT_NAME) -f docker-compose.yml build \
 		--build-arg UID=$(shell id -u) \
@@ -159,6 +147,17 @@ cataplum:
 		--rmi all --remove-orphans --volumes
 	@docker system prune -a -f --volumes
 
+console: start
+	@$(exec_on_docker) bash
+
+virtualenv:
+	@python3 -m venv --clear --copies ./virtualenv
+	@./virtualenv/bin/python3 -m pip install --upgrade pip
+	@./virtualenv/bin/python3 -m pip install --upgrade setuptools
+	@./virtualenv/bin/python3 -m pip install --upgrade wheel
+	@./virtualenv/bin/python3 -m pip install -r requirements-dev.txt
+	@./virtualenv/bin/python3 -m pip install -e .
+
 release:
 	@./scripts/release.sh $${VERSION_TYPE}
 
@@ -170,7 +169,6 @@ release-minor:
 
 release-major:
 	@./scripts/release.sh major $${APP_NAME}
-
 
 release-preflight:
 	@make image
@@ -184,4 +182,4 @@ undo-release:
 	@: "$${VERSION:?Set VERSION=x.y.z before running make undo-release}"
 	@VERSION=$${VERSION} ./scripts/rollback.sh release
 
-.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format lint-and-format test test-all coverage docs servedocs build dependencies install console virtualenv image start stop down destroy cataplum release release-patch release-minor release-major release-preflight undo-release
+.PHONY: help clean clean-build clean-pyc clean-test clean-docs lint format lint-and-format test test-all coverage docs servedocs build dependencies install image start stop down destroy cataplum console virtualenv release release-patch release-minor release-major release-preflight undo-release
