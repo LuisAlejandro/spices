@@ -11,6 +11,6 @@ pip==26.1.2
 pydocstyle==6.3.0
 setuptools==83.0.0
 tox==4.56.1
-virtualenv==21.5.1
+virtualenv==21.6.1
 watchdog==6.0.0
 wheel==0.47.0
