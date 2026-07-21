@@ -1,6 +1,6 @@
 build==1.5.1
 bumpversion==0.6.0
-coverage==7.15.1
+coverage==7.15.2
 coveralls==4.1.0
 ruff==0.15.20
 pyright==1.1.411
