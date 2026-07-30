@@ -73,10 +73,13 @@ install directly from GitHub like this::
 Usage
 -----
 
-.. _USAGE: https://github.com/LuisAlejandro/spices/blob/develop/USAGE.rst
+Create a ``.spices.yml`` in your project, then::
 
-Create a ``.spices.yml``, then run ``spices install``. See USAGE_ for details
-(some legacy sections may lag the current CLI).
+    $ spices install
+    $ spices install -c path/to/.spices.yml
+
+See ``.spices.yml`` in this repo and ``example_with_repos.yml`` for examples.
+Legacy command docs in ``USAGE.rst`` may be outdated relative to the current CLI.
 
 Getting help
 ============
