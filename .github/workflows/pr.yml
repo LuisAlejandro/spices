@@ -114,6 +114,7 @@ jobs:
           flag-name: run-py${{ matrix.python-version }}
           path-to-lcov: ./.lcov
           parallel: true
+          fail-on-error: false
 
   docs:
     name: Documentation
@@ -161,6 +162,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
+          fail-on-error: false
 
   # >>> rosey-maintainer:ci-quality BEGIN
   code-quality:
