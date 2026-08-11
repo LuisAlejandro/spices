@@ -93,6 +93,21 @@ jobs:
           tox -e coverage
 
       - name: Coveralls Parallel
+        id: coveralls
+        uses: coverallsapp/github-action@v2
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-py${{ matrix.python-version }}
+          path-to-lcov: ./.lcov
+          parallel: true
+
+      - name: Wait before Coveralls retry
+        if: steps.coveralls.outcome == 'failure'
+        run: sleep 30
+
+      - name: Coveralls Parallel (retry)
+        if: steps.coveralls.outcome == 'failure'
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -129,6 +144,19 @@ jobs:
     needs: [docs]
     steps:
       - name: Coveralls Finished
+        id: coveralls-finish
+        uses: coverallsapp/github-action@v2
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+
+      - name: Wait before Coveralls finish retry
+        if: steps.coveralls-finish.outcome == 'failure'
+        run: sleep 30
+
+      - name: Coveralls Finished (retry)
+        if: steps.coveralls-finish.outcome == 'failure'
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
