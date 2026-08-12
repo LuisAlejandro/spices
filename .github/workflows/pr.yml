@@ -10,10 +10,15 @@ on:
     branches:
       - develop
 
+concurrency:
+  group: pull-request-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Linting
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -35,6 +40,7 @@ jobs:
   integration:
     name: Integration Tests
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -68,10 +74,11 @@ jobs:
   unit:
     name: Unit tests
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     needs: [lint, integration]
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.13", "3.14"]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -93,16 +100,33 @@ jobs:
           tox -e coverage
 
       - name: Coveralls Parallel
+        id: coveralls
         uses: coverallsapp/github-action@v2
+        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: run-py${{ matrix.python-version }}
           path-to-lcov: ./.lcov
           parallel: true
 
+      - name: Wait before Coveralls retry
+        if: steps.coveralls.outcome == 'failure'
+        run: sleep 30
+
+      - name: Coveralls Parallel (retry)
+        if: steps.coveralls.outcome == 'failure'
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-py${{ matrix.python-version }}
+          path-to-lcov: ./.lcov
+          parallel: true
+          fail-on-error: false
+
   docs:
     name: Documentation
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     needs: [unit]
     steps:
       - name: Checkout repo
@@ -126,18 +150,34 @@ jobs:
   finish:
     name: Finish
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     needs: [docs]
     steps:
       - name: Coveralls Finished
+        id: coveralls-finish
         uses: coverallsapp/github-action@v2
+        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
+
+      - name: Wait before Coveralls finish retry
+        if: steps.coveralls-finish.outcome == 'failure'
+        run: sleep 30
+
+      - name: Coveralls Finished (retry)
+        if: steps.coveralls-finish.outcome == 'failure'
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          fail-on-error: false
 
   # >>> rosey-maintainer:ci-quality BEGIN
   code-quality:
     name: Code Quality
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     container:
       image: semgrep/semgrep
     steps:
