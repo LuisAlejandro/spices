@@ -15,14 +15,14 @@ jobs:
     # Re-enable discover-images + test-docker-images when the matrix is repaired.
     docker-matrix-disabled:
         name: Docker Tests (disabled)
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         steps:
             - run: echo "Docker distro matrix disabled pending fleet repair"
 
     discover-images:
         if: false
         name: Discover Docker Images
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         outputs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
         steps:
@@ -58,7 +58,7 @@ jobs:
     test-docker-images:
         if: false
         name: Test spices install on ${{ matrix.distro }}:${{ matrix.version }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         needs: discover-images
         strategy:
             fail-fast: false

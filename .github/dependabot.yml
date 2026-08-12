@@ -6,6 +6,8 @@ updates:
     interval: monthly
     day: tuesday
     time: "01:00"
+  cooldown:
+    default-days: 14
 
 - package-ecosystem: pip
   directory: "/docs"
@@ -13,6 +15,8 @@ updates:
     interval: monthly
     day: tuesday
     time: "01:00"
+  cooldown:
+    default-days: 14
 
 - package-ecosystem: github-actions
   directory: "/"
@@ -20,3 +24,5 @@ updates:
     interval: monthly
     day: tuesday
     time: "01:00"
+  cooldown:
+    default-days: 14
