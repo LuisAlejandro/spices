@@ -93,12 +93,28 @@ jobs:
           tox -e coverage
 
       - name: Coveralls Parallel
+        id: coveralls
         uses: coverallsapp/github-action@v2
+        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: run-py${{ matrix.python-version }}
           path-to-lcov: ./.lcov
           parallel: true
+
+      - name: Wait before Coveralls retry
+        if: steps.coveralls.outcome == 'failure'
+        run: sleep 30
+
+      - name: Coveralls Parallel (retry)
+        if: steps.coveralls.outcome == 'failure'
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-py${{ matrix.python-version }}
+          path-to-lcov: ./.lcov
+          parallel: true
+          fail-on-error: false
 
   docs:
     name: Documentation
@@ -129,10 +145,24 @@ jobs:
     needs: [docs]
     steps:
       - name: Coveralls Finished
+        id: coveralls-finish
         uses: coverallsapp/github-action@v2
+        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
+
+      - name: Wait before Coveralls finish retry
+        if: steps.coveralls-finish.outcome == 'failure'
+        run: sleep 30
+
+      - name: Coveralls Finished (retry)
+        if: steps.coveralls-finish.outcome == 'failure'
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          fail-on-error: false
 
   # >>> rosey-maintainer:ci-quality BEGIN
   code-quality:
