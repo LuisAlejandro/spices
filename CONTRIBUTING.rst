@@ -94,7 +94,8 @@ Quality Checks
 --------------
 
 The lint stack is **Ruff** (format + lint), **pydocstyle**, **bandit**, and
-**Pyright**, configured in ``pyproject.toml`` and run via tox.
+**Pyright**, configured in ``pyproject.toml`` and run via tox. ``make test``
+runs the **coverage** tox env (not the full multi-Python matrix).
 
 Before opening a pull request, run::
 
