@@ -64,7 +64,7 @@ jobs:
         with:
           name: dist
           path: dist/*
-          retention-days: 30
+          retention-days: 7
 
   publish-to-pypi:
     name: Publish to PyPI

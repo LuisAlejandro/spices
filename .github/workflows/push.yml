@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - develop
       - "release/**"
 
 jobs:
@@ -20,6 +19,8 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
 
       - name: Installing dependencies
         run: |
@@ -42,6 +43,8 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
 
       - name: Install package
         run: |
@@ -80,6 +83,8 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
 
       - name: Installing dependencies
         run: |
@@ -114,6 +119,8 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: docs/requirements.txt
 
       - name: Install documentation dependencies
         run: |
@@ -124,22 +131,6 @@ jobs:
         run: |
           cd docs
           python3 -m sphinx -T -b html -d _build/doctrees -D language=en . _build/html
-
-      - name: Trigger ReadTheDocs webhook
-        if: success() && (github.ref_name == 'master' || github.ref_name == 'develop')
-        env:
-          RTD_WEBHOOK_URL: ${{ secrets.RTD_WEBHOOK_URL }}
-          RTD_WEBHOOK_TOKEN: ${{ secrets.RTD_WEBHOOK_TOKEN }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: |
-          if [ -z "$RTD_WEBHOOK_URL" ] || [ -z "$RTD_WEBHOOK_TOKEN" ]; then
-            echo "ReadTheDocs webhook secrets RTD_WEBHOOK_URL and RTD_WEBHOOK_TOKEN must be configured"
-            exit 1
-          fi
-          curl -f -X POST \
-            -d "branches=$GITHUB_REF_NAME" \
-            -d "token=$RTD_WEBHOOK_TOKEN" \
-            "$RTD_WEBHOOK_URL"
 
   finish:
     name: Finish
