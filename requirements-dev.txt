@@ -12,6 +12,6 @@ pydocstyle==6.3.0
 setuptools==84.0.0
 tox==4.58.0
 twine==7.0.0
-virtualenv==21.7.3
+virtualenv==21.7.4
 watchdog==6.0.0
 wheel==0.47.0
