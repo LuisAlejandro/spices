@@ -82,3 +82,6 @@ id_ed25519.pub
 
 # Node (e.g. under .cursor/skills)
 node_modules/
+
+# OS files
+.DS_Store
