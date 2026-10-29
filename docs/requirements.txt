@@ -12,7 +12,7 @@ babel==2.15.0
     # via sphinx
 beautifulsoup4==4.15.0
     # via -r requirements.in
-certifi==2024.7.4
+certifi==2026.10.18
     # via requests
 charset-normalizer==3.2.0
     # via requests
